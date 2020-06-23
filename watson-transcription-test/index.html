@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Demo</title>
+<style>
+	body{
+		font-size: 18px;
+		font-family: monospace, monospace;
+		margin: 0;
+	}
+	form{
+		margin: 0 auto;
+		text-align: center;
+		background: #555;
+		padding: 1em;
+	}
+	p{
+		line-height: 1.4em;
+	}
+	p.default_text{
+		text-align: center;
+		margin: 4em auto;
+	}
+	h1{
+		text-align: center;
+	}
+	#outer{
+		padding: 0 1em 2em;
+	}
+	audio{
+		width: calc(100% - 2em);
+		max-width: 100%;
+		margin: 1em;
+		display: block;
+	}
+	#audio-container{
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		padding: .5em;
+		background: rgba(0,0,0,.8);
+		box-sizing: border-box;
+	}
+	#transcript-container{
+		margin: 2em auto 8em;
+		display: block;
+		width: auto;
+		max-width: 50em;
+	}
+	.section {
+	    display: flex;
+	    margin: 0 auto 1em;
+	    flex-direction: row;
+	}
+	.metadata{
+		padding-top: 1em;
+		flex-shrink: 0;
+		margin-bottom: 1em;
+		font-size: .8em
+	}
+	.speaker_label{
+		display: block;
+		margin: .5em 0;
+		color: #777
+	}
+	.time{
+		color: #777;
+		cursor: pointer;
+	}
+	.content{
+		padding-left: 2em;
+	}
+	.content p{
+		max-width: 40em;
+	}
+	.confidence{
+		padding: 2px 3px 0;
+		border-radius: 3px;
+		color: #fff;
+		display: inline-block;
+	}
+	.confidence-10 .confidence{
+		background-color:#4CAF50
+	}
+	.confidence-9 .confidence{
+		background-color:#4CAF50
+	}
+	.confidence-8 .confidence{
+		background-color:#8BC34A
+	}
+	.confidence-7 .confidence{
+		background-color:#CDDC39;
+		color: #222;
+	}
+	.confidence-6 .confidence{
+		background-color:#FFEB3B;
+		color:#222;
+	}
+	.confidence-5 .confidence{
+		background-color:#FFC107;
+		color: #222;
+	}
+	.confidence-4 .confidence{
+		background-color:#f44336
+	}
+	.confidence-3 .confidence{
+		background-color:#f44336
+	}
+	.confidence-2 .confidence{
+		background-color:#f44336
+	}
+	.confidence-1 .confidence{
+		background-color:#f44336
+	}
+	.noselect {
+	  -webkit-touch-callout: none; /* iOS Safari */
+	    -webkit-user-select: none; /* Safari */
+	     -khtml-user-select: none; /* Konqueror HTML */
+	       -moz-user-select: none; /* Firefox */
+	        -ms-user-select: none; /* Internet Explorer/Edge */
+	            user-select: none; /* Non-prefixed version, currently
+	                                  supported by Chrome and Opera */
+	}		
+	
+	@media all and (max-width:35em){
+		.speaker_label{
+			display: inline-block;
+			padding-left: 1em;
+		}
+		.speaker_label:after{
+			content: ' | ';
+		}
+		.section{
+			flex-direction: column;
+		}
+		.content{
+			padding-left: 0;
+		}
+		.metadata{
+			border-bottom: 1px dotted #ccc;
+		}
+		.time{
+			display: inline;
+			padding-left: 1em;
+		}
+		.time div{
+			display: inline-block;
+		}
+		.time div:first-child:after{
+			content:'–';
+			display: inline-block;
+			padding: 0 3px;
+		}
+	}
+</style>
+<body>
+
+<form>
+	<select id="interview-select">
+		<option value="" selected>Select an Interview</option>
+		<option value="127015">127015: Frank Lucas</option>
+		<option value="127018">127018: Father Michael Franz</option>
+		<option value="400005sr">400005sr: Margaret Glinski</option>
+		<option value="800005sr">800005: Phyllis M. Glaeser</option>
+		<option value="801013">801013: Roman Zorska</option>
+		<option value="955023_999036">955023_999036: Chuck Hoven</option>
+	</select>
+	<input type="button" onclick="formSubmit()" value="Submit">
+</form>
+
+<div id="outer">
+	
+	<h1 id="title"></h1>
+	
+	<div id="audio-container" class="noselect"></div>
+	
+	<div id="transcript-container">
+		<p class="default_text">Select an interview to view the automated transcription.</p>
+	</div>
+
+</div>
+</body>
+</html>
+<script>
+	function formatTime(start,end){
+		var endsecs=Math.round(end[2]);
+		var startsecs=Math.round(start[2]);
+		var s = new Date(null);
+		s.setSeconds(startsecs); 
+		var e = new Date(null);
+		e.setSeconds(endsecs); 		
+		var timeArray = [
+			s.toISOString().substr(11, 8),
+			e.toISOString().substr(11, 8),
+		];
+		return timeArray;	
+	}
+	
+	function formSubmit() {
+		var obj = document.getElementById("interview-select");
+		var interview_id = obj.options[obj.selectedIndex].value;
+		var interview_title = obj.options[obj.selectedIndex].text;
+		if(interview_id){
+		  renderTranscript(interview_id,interview_title);
+		}
+	}
+	
+	function goToAudioPosition(s){
+		var player = document.getElementById("audioelement");
+		player.currentTime=s;
+		player.play();
+	}
+	
+	function renderTranscript(interview_id,interview_title){
+		console.log(interview_id);
+		
+		var container = document.getElementById("transcript-container");
+		container.innerHTML='';
+		
+		var title = document.getElementById("title");
+		title.innerHTML=interview_title;
+
+		var audiocontainer = document.getElementById("audio-container");
+		audiocontainer.innerHTML='<audio id="audioelement" preload controls><source src="'+interview_id+'.mp3" type="audio/mpeg"></audio>';
+		
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+		  if (this.readyState == 4 && this.status == 200) {
+		    var response = JSON.parse(this.responseText);
+		    console.log(response);
+		    response.results.forEach(function(item,index){
+			    var classname='confidence-'+Math.round( (item.alternatives[0].confidence * 10));
+			    var end=item.alternatives[0].timestamps[item.alternatives[0].timestamps.length-1];
+			    var start=item.alternatives[0].timestamps[0];
+			    var times=formatTime(start,end);
+			    
+			    container.innerHTML += '<div class="section '+classname+'">'+
+			    '<div class="metadata noselect">'+
+			    	'<div class="confidence">'+ Math.round(item.alternatives[0].confidence * 100)+'%</div>'+
+			    	'<div class="speaker_label"></div>'+
+					'<div class="time" onclick="goToAudioPosition('+Math.round(start[2])+')" data-time="'+Math.round(start[2])+'">'+
+						'<div>'+times[0]+'</div>'+
+						'<div>'+times[1]+'</div>'+
+					'</div>'+
+				'</div>'+	
+			    '<div class="content">'+
+			    	'<p onclick = "this.contentEditable = true;" onblur = "this.contentEditable = false;">'+item.alternatives[0].transcript+'</p>'+
+			    '</div>'+
+			    '</div>';
+			    
+		    })
+		    
+		  }
+		};
+		xmlhttp.open("GET", interview_id+".json", true);
+		xmlhttp.send();		
+	}
+</script>

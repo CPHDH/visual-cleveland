@@ -1,0 +1,153 @@
+p{
+	max-width: 42em;
+	display: block;
+	margin: 0 auto;
+	padding: 1em;
+}
+
+figure{
+	margin: 0;
+}
+figcaption{
+	font-size: .8em;
+	padding: .25em .5em;
+	color:#999;
+	line-height: 1.2em;
+}
+figcaption a{
+	color:#777;
+}
+
+#map-canvas {
+  height: 550px;
+  max-height: 60vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: #eaeaea;
+}
+
+/* Marker Clusters */
+.marker-cluster-large {
+    background-color: rgba(38,50,56,.4) !important;
+}
+.marker-cluster-large div {
+    background-color: rgba(38,50,56,.85) !important;
+    color: #fff;
+    text-shadow: 1px 1px 1px rgba(38,50,56,1);
+}
+
+.marker-cluster-medium {
+    background-color: rgba(55,71,79,.4) !important;
+}
+.marker-cluster-medium div {
+    background-color: rgba(55,71,79,.85) !important;
+    color: #fff;
+    text-shadow: 1px 1px 1px rgba(55,71,79,1);
+}
+
+.marker-cluster-small {
+    background-color: rgba(84,110,122,.4) !important;
+}
+.marker-cluster-small div {
+    background-color: rgba(84,110,122,.85) !important;
+    color: #fff;
+    text-shadow: 1px 1px 1px rgba(84,110,122,1);
+}
+/* Hide/Show when spiderfied */
+.marker-cluster{
+	transition: opacity 500ms ease-in-out;
+}
+.spiderfied path[fill-rule].leaflet-interactive:not(.active-marker),
+.spiderfied .marker-cluster{
+	opacity: 0.5 !important; /* dim marker clusters and inactive (unclustered) markers*/
+}
+.spiderfied .leaflet-marker-pane{
+	z-index: 399 !important; /* lower marker clusters */
+}
+.spiderfied path.active-marker{
+	/* this gets raised via D3 */
+}
+
+/* Legend */
+#legend{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 999;
+	max-width: 140px;
+	background: #fff;
+	border-radius: 3px;
+	box-shadow: 0 0 .5em rgba(0,0,0,.5);
+	padding: 10px 12px 0 10px;
+	opacity: .9;
+	display: none;
+}
+.leaflet-container #legend{
+	display: block;
+}
+@media all and (max-width:35em){
+	/* todo: make this a toggle on mobile */
+	.leaflet-container #legend{
+		display: none;
+	}	
+}
+#legend h1{
+	margin: 0 0 .5em 0;
+	padding-bottom: .5em;
+	border-bottom: 1px solid #ccc;
+}
+#legend ul{
+	padding-left: 0;
+	list-style-position: inside;
+	list-style-type: none;
+}
+#legend li{
+	display: flex;
+	align-items:flex-start;
+	margin-bottom: 6px;
+}
+#legend li:last-child{
+	margin-bottom: 0;
+}
+#legend li .color{
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin-top: 2px;
+	content:'';
+	height:12px;
+	width:12px;
+	border-radius: 50%;
+	margin-right: 10px;
+	border: 2px solid rgba(256,256,256,.6);
+}
+#legend ul li .label{
+	font-size: 12px;
+	line-height: 15px;
+	padding-top: 2.5px;
+	text-transform: capitalize;
+}
+
+/* Address Toast */
+#toast {
+	display: none;
+	z-index: 500;
+	position: absolute;
+	left: 0;
+	right:0;
+	bottom: 20px;
+	text-align: center;
+}
+.leaflet-container.spiderfied #toast{
+	display: block;
+}
+.leaflet-container.spiderfied #toast #toast-inner{
+	display: inline-block;
+	background: rgba(0,0,0,.5);
+	padding: 10px 20px;
+	border-radius: 7px;
+	color: #fff;
+	text-shadow: 0 0 1px #000;
+	box-shadow: 0 0 5px rgba(0,0,0,.5);
+	border: 1px solid #fff;	
+}
