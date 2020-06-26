@@ -16,7 +16,7 @@ include '../common/header.php';
 	<div class="section-title"><h2><?php echo $title;?></h2> by <strong><?php echo $author;?></strong></div>
 	<figure>
 		<div id="map-canvas">
-			<div id="legend"><h1>Legend</h1></div>
+			<div id="legend"><h1>Year</h1><select id="y_select"></select><h1>Legend</h1></div>
 			<div id="toast"><div id="toast-inner"></div></div>		
 		</div>
 		<figcaption>Fig1: Interactive map displaying historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street). Source: Cleveland City Directories, select years from 1937 to 1997.

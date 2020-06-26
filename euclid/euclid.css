@@ -4,7 +4,10 @@ p{
 	margin: 0 auto;
 	padding: 1em;
 }
-
+select{
+	margin-bottom: 1em;
+	width: 100%;
+}
 figure{
 	margin: 0;
 }
