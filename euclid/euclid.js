@@ -139,7 +139,7 @@ function doMap(data_by_years, years, year_index){
 	});
 
 	// add markers
-	console.log("loading data for "+years[year_index]+"...");							
+	console.log("loading data for "+years[year_index]+"...");
 	data_by_years[year_index].forEach(function(row,i){
 		// coords
 		var lon=row.Longitude;
@@ -211,10 +211,9 @@ function doMap(data_by_years, years, year_index){
 		var toast_content = address_array.length == 1 ? address_array[0] : address_array.length + " addresses";
 		d3.select('#toast-inner').html(toast_content);			
 		
-		
-	})        
-	// Fit map to markers			        
-    map.fitBounds(markers.getBounds()); 		
+	});
+	// Fit map to markers (@TODO: ON INITIAL LOAD ONLY)
+	map.fitBounds(markers.getBounds()); 	        
 }
 
 function colorRange(i){
@@ -314,4 +313,4 @@ function convertHtmlToText(value) {
     var d = document.createElement('div');
     d.innerHTML = value;
     return d.innerText;
-}	
+}
