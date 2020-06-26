@@ -4,7 +4,7 @@ var csv="euclid_geocoded_mod.csv";
 var map_container="map-canvas";
 var default_coords=[41.499685,-81.690637];
 var default_zoom=12;
-var condensed_labels = ["BUILDING DETAIL","UNKNOWN","UNKNOWN OR OTHER","BUILDING AMENITY","PARKING"];
+var condensed_labels = ["BUILDING DETAIL","UNKNOWN","UNKNOWN OR OTHER","BUILDING AMENITY","PARKING", "UTILITIES"];
 var condensed_labels_replacement = "OTHER"; // condensed & unconfigured categories always appear as black (#000000)
 var label_colors = [{
 		'name': 'CLUBS AND ORGANIZATIONS',
@@ -39,9 +39,6 @@ var label_colors = [{
 	},{
 		'name': 'VACANT',
 		'color': '#777777'
-	},{
-		'name': 'UTILITIES',
-		'color': '#aaaaaa'
 	}];
 
 // D3 Extensions ==========================================
