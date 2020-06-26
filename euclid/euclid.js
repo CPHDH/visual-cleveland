@@ -26,6 +26,9 @@ var label_colors = [{
 		'color': colorRange(6)
 	},{
 		'name': 'MANUFACTURER',
+		'color': colorRange(7)
+	},{
+		'name': 'MUSEUMS AND GALLERIES',
 		'color': colorRange(7.75)
 	},{
 		'name': 'PROFESSIONAL',
