@@ -236,9 +236,10 @@ function getYears(data){
 }
 
 function dataByYears(data){
+	var sort_by_year = data.sort(function (a,b) {return d3.ascending(a.year, b.year); });
 	byYears=[];
-	getYears(data).forEach(function(y,i){
-		var yearfilter = data.filter(obj => {
+	getYears(sort_by_year).forEach(function(y,i){
+		var yearfilter = sort_by_year.filter(obj => {
 			return obj.year === y;
 		});
 		byYears[i]=yearfilter;
