@@ -1,6 +1,6 @@
 // Configured variables ===================================
 
-var csv="euclid_geocoded_mod.csv";
+var csv="euclid.csv";
 var map_container="map-canvas";
 var default_coords=[41.499685,-81.690637];
 var default_zoom=12;
