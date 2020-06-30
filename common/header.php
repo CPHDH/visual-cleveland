@@ -9,7 +9,7 @@ require $server.'/helpers/functions.php';
 <html lang="en-us">
 	<head>
 	    <meta charset="utf-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<link rel="stylesheet" type="text/css" href="<?php echo $site;?>/styles/global.css">
 		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">

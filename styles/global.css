@@ -323,6 +323,10 @@ article.main{
 	padding-top: 0;
 }
 
+a.data-download{
+	text-decoration: underline;
+}
+
 section {
 	margin:0 auto 2em;
 	display:block;
