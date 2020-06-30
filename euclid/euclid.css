@@ -79,21 +79,45 @@ figcaption a{
 	right: 10px;
 	z-index: 999;
 	max-width: 140px;
+	min-width: 100px;
 	background: #fff;
 	border-radius: 3px;
 	box-shadow: 0 0 .5em rgba(0,0,0,.5);
 	padding: 10px 12px 0 10px;
 	opacity: .9;
 	display: none;
+	max-height: 90%;
+	overflow-y: scroll;	
 }
+@media all and (max-height: 1130px){
+	.leaflet-container #legend:after{
+		content: '';
+		display: block;
+		height: 1em;
+		background-image:linear-gradient(to top,#ffffff 0%, rgba(256,256,256,0) 100%);
+		width: 100%;
+		z-index: 9999999;
+		position: sticky;
+		bottom: 0;
+		left: 0;
+	}	
+}
+
 .leaflet-container #legend{
 	display: block;
 }
+
 @media all and (max-width:35em){
 	/* todo: make this a toggle on mobile */
-	.leaflet-container #legend{
+	.leaflet-container #legend ul{
 		display: none;
-	}	
+	}
+	.leaflet-container #legend h1:nth-child(3){
+		display: none;
+	}
+	.leaflet-container #legend select{
+		margin-bottom: 0;
+	}
 }
 #legend h1{
 	margin: 0 0 .5em 0;
