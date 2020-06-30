@@ -116,7 +116,7 @@ function doMap(data_by_years, years, year_index){
 	map = L.map(map_container,{
 		scrollWheelZoom: false,
 		center:default_coords,
-		zoom:default_zoom
+		zoom:default_zoom,
 	});
 	L.tileLayer('//cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/light_all/{z}/{x}/{y}{retina}.png', {
 	    attribution: '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://cartodb.com/attributions">CartoDB</a>',
@@ -213,7 +213,7 @@ function doMap(data_by_years, years, year_index){
 		
 	});
 	// Fit map to markers (@TODO: ON INITIAL LOAD ONLY)
-	map.fitBounds(markers.getBounds()); 	        
+	map.fitBounds(markers.getBounds()); 
 }
 
 function colorRange(i){
