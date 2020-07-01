@@ -1,6 +1,7 @@
 <?php 
-$title='Population';
-$subtitle='Cleveland Decennial Census Data, 1800-2010';
+$title='Decennial Census Data';
+$subtitle='Cleveland Population Change, 1800-2010';
+$author = '<a href="http://csudigitalhumanities.org">CSU Center for Public History + Digital Humanities</a>';
 $header_styles='<link rel="stylesheet" type="text/css" href="census.css">';
 $cta=null;
 $hero=null;
@@ -11,7 +12,7 @@ include '../common/header.php';
 
 <section class="container">
 	
-	<div class="section-title"><h2>Cleveland Decennial Census Data, 1800-2010</h2> by <strong>Erin Bell</strong>, <a href="">Center for Public History + Digital Humanities</a> </div>
+	<div class="section-title"><h2><?php echo $subtitle;?></h2> <span class="byline">by <strong><?php echo $author;?></strong></span></div>
 	<figure id="interactive">
 	<div class="inner">
 		<div class="figtitle">Fig1: Decennial Census Data</div>
@@ -19,7 +20,6 @@ include '../common/header.php';
 			<a id="bar-chart" href=""><span class="fa fa-bar-chart"></span> Bar Chart</a>
 			<a id="line-chart" href=""><span class="fa fa-line-chart"></span> Line Chart</a>
 			<a id="diverging-chart" href=""><span class="fa fa-exchange"></span> Diverging Chart</a>
-			<!--a id="pie-chart" href=""><span class="fa fa-pie-chart"></span> Pie Chart</a-->
 			<a id="data-table" href=""><span class="fa fa-table"></span> Data Table</a>
 		</nav>
 		<div id="data-visualization-container"></div>
