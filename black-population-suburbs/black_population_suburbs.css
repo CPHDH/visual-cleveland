@@ -1,0 +1,124 @@
+#chart {
+	width:100%;
+}
+
+table{
+	width: 94%;
+	margin: 1em 3%;
+	border-collapse: collapse;
+}
+
+table th{
+	text-align: left;
+}
+
+tr{
+	border-bottom: 1px solid #ccc;
+}
+
+tbody tr:hover{
+	background:#c61c6f;
+	color:#fff;
+	border-bottom: 1px solid #fff;
+}
+
+td{
+	padding: 3px 6px 3px 3px;
+	font-size: 14px;
+}
+
+td span{
+	opacity: .7;
+	font-size: 12px;
+}
+
+figure{
+	margin: 0;
+}
+
+nav.options{
+	display: block;
+	margin: 1em;
+	font-size: .8em;
+}
+
+nav.options a{
+	text-decoration: none;
+	color: #fafafa;
+	background: #aaa;
+	padding: .5em;
+	margin: .15em;
+	display: inline-block;
+}
+
+nav.options a:hover{
+	background: #017389;
+}
+
+nav.options a.active{
+	background: #04B3D2;
+}
+
+.figtitle{
+	margin: .5em 1em 0;
+	font-size: .8em;
+	color:#777;
+	font-style: italic;
+}
+
+figure{
+	margin-bottom: 1em;
+}
+
+figure#interactive .inner{
+	background: #e0e0e0;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	min-height: 520px;
+	overflow-x: auto;
+	display: inline-block;
+	width: 100%;
+	padding: .5em 0;
+}
+
+figcaption{
+	font-size: .8em;
+	padding: .25em .5em;
+	color:#999;
+	line-height: 1.2em;
+}
+figcaption a{
+	color:#777;
+}
+#byline{
+	margin-bottom: 2em;
+}
+
+#metadata{
+	background: #eaeaea;
+	padding: 1em;
+	font-size: .85em;
+	
+}
+.explanation{
+	margin-top: 2em;
+	margin: 2em 2em 0;
+}
+
+@media all and (min-width:50em){
+	.explanation{
+		display: flex;
+		align-items: stretch;
+	}
+	.explanation section.col{
+		margin:auto;
+		flex: 1;
+	}
+	.explanation section#text{
+		order: 1;
+		margin: 0 2em 0 0;
+	}	
+	.explanation section#metadata{
+		order:2;
+	}
+}
