@@ -130,9 +130,13 @@ function doDataTable(data, container, years_covered){
 	    .data(function(row) {
 	        return columns.map(function(column) {
 		        if(typeof row[column] === 'object'){
-			        var b = row[column].population_black !== null ? row[column].population_black : "unknown";
-			        var t = row[column].population_total !== null ? row[column].population_total : "unknown"
-			        v = row[column].percentage_black + "%" + "<br><span>" + b + "/" + t + "</span>";
+			        var total_position = i-1;		        
+			        var b = row[column].population_black !== null ? row[column].population_black : "no data";
+			        var t = row[column].population_total !== null ? row[column].population_total : "no data";
+			        var b_int = row[column].population_black !== null ? row[column].population_black : 0;
+			        var t_int = row[column].population_total !== null ? row[column].population_total : 0;
+			        var p_num = row[column].percentage_black !== '--' ? row[column].percentage_black : 0;
+			        v = '<div class="'+column+'" data-percent="'+p_num+'" data-black="'+b_int+'">'+row[column].percentage_black + '%' + '<br><span class="fraction" >' + (b !== t ? b + '/' + t : b) + '</span></div>';
 		        }else{
 			        v  = "<strong>"+row[column]+"</strong>";
 		        }
@@ -149,4 +153,30 @@ function doDataTable(data, container, years_covered){
 	
 	return table;
 	
-}
+}	// highlight max values for each column
+	years_covered.forEach(function(y){
+		let black_max = 0;
+		let percent_max = 0;
+		let cells = document.querySelectorAll('table div._'+y);
+		cells.forEach(function(cell,i){
+			if(Number(cell.dataset.black) >= black_max){
+				black_max = Number(cell.dataset.black);
+			};
+			if(Number(cell.dataset.percent) >= percent_max){
+				percent_max = Number(cell.dataset.percent);
+			};				
+		});
+		
+		let pm = document.querySelector('table div._'+y+'[data-percent="'+percent_max+'"]');
+		pm.classList.add('max-percent');
+		pm.setAttribute('data-title',"Highest percentage, "+y);
+
+		let bm = document.querySelector('table div._'+y+'[data-black="'+black_max+'"]');
+		bm.classList.add('max-black');
+		if(bm.classList.contains('max-percent')){
+			bm.setAttribute('data-title',"Highest percentage & largest black population, "+y);
+		}else{
+			bm.setAttribute('data-title',"Largest black population, "+y);
+		}			
+		
+	});		
