@@ -27,9 +27,53 @@ td{
 	font-size: 14px;
 }
 
-td span{
+td div{
+	padding: 2px;
+}
+
+td span.fraction{
 	opacity: .7;
 	font-size: 12px;
+}
+
+.max-black{
+	background: #C6FF00;
+	color:#000;
+	border-radius: 2px;
+}
+.max-percent{
+	background: #FFFF00;
+	color:#000;
+	border-radius: 2px;
+}
+.max-black.max-percent{
+	color: #000;
+	background: linear-gradient(to bottom right, #C6FF00 50%, #FFFF00 50%)
+}
+
+[data-title]:hover:after {
+    opacity: 1;
+    transition: all 0.1s ease 0.25s;
+    visibility: visible;
+}
+[data-title]:after {
+    content: attr(data-title);
+    white-space: nowrap;
+	color: #777;
+	background: #fff;
+	box-shadow: 0 0 1em rgba(0,0,0,.5);
+    font-size: 12px;
+    line-height: 1.2em;
+    position: absolute;
+    padding: 6px;
+    bottom: -25px;
+    right:0;
+    opacity: 0;
+    z-index: 99999;
+    visibility: hidden;
+}
+[data-title] {
+    position: relative;
 }
 
 figure{
