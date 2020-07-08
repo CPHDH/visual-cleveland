@@ -97,10 +97,10 @@ function doDataTable(data, container, years_covered){
 	c.unshift("City");
 	var columns = c;
 	
-	// @TODO
+	// track column totals using this object
 	var column_totals = years_covered.map(function(y){
 		return {
-			'year':'_'+y,
+			'year':y,
 			'total':0,
 			'black':0
 		}
@@ -128,7 +128,7 @@ function doDataTable(data, container, years_covered){
 	
 	var cells = rows.selectAll("td")
 	    .data(function(row) {
-	        return columns.map(function(column) {
+	        return columns.map(function(column,i) {
 		        if(typeof row[column] === 'object'){
 			        var total_position = i-1;		        
 			        var b = row[column].population_black !== null ? row[column].population_black : "no data";
@@ -137,6 +137,11 @@ function doDataTable(data, container, years_covered){
 			        var t_int = row[column].population_total !== null ? row[column].population_total : 0;
 			        var p_num = row[column].percentage_black !== '--' ? row[column].percentage_black : 0;
 			        v = '<div class="'+column+'" data-percent="'+p_num+'" data-black="'+b_int+'">'+row[column].percentage_black + '%' + '<br><span class="fraction" >' + (b !== t ? b + '/' + t : b) + '</span></div>';
+			        
+			        // update column totals
+			        column_totals[total_position].total = column_totals[total_position].total + t_int;
+			        column_totals[total_position].black = column_totals[total_position].black + b_int;
+			        
 		        }else{
 			        v  = "<strong>"+row[column]+"</strong>";
 		        }
@@ -151,9 +156,19 @@ function doDataTable(data, container, years_covered){
 	    .attr("style", "font-family: monospace") // sets the font style
 	        .html(function(d) { return d.value; });
 	
-	return table;
+	// @TODO: add column totals to table
+	var table = document.querySelector('table tbody');
+	console.log(table);
+	column_totals.forEach(function(obj){
+		var year = obj.year;
+		var population_total_sum = obj.total;
+		var population_black_sum = obj.black;
+		var percent_sum = round( (obj.black/obj.total) *100, 2 ) +"%";
+		var cell_data = '<div class="totals '+year+'">'+percent_sum + '<br><span class="fraction">' + population_black_sum + '/' + population_total_sum + '</span></div>';
+		console.log(cell_data);
+	})
 	
-}	// highlight max values for each column
+	// highlight max values for each column
 	years_covered.forEach(function(y){
 		let black_max = 0;
 		let percent_max = 0;
@@ -180,3 +195,5 @@ function doDataTable(data, container, years_covered){
 		}			
 		
 	});		
+}
+
