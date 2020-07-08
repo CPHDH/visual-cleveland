@@ -25,17 +25,15 @@ tr{
 tr.totals{
 	background:#ccc;
 	font-family: monospace;
-	border-top: 1em solid rgba(0,0,0,0);
-	border-bottom-color: rgba(0,0,0,0);
+	border-bottom: 1px solid rgba(0,0,0);
+	border-top: 1px solid rgba(0,0,0);
+	text-transform: uppercase;
 }
-tr.totals td:first-child{
-	background-color: #e0e0e0;
-	color: #000;
-}
+
 tr.totals:hover{
 	background:#000;
 	color:#fff;
-	border-bottom-color: rgba(0,0,0,0);
+	border-bottom-color: rgba(0,0,0);
 }
 
 td{

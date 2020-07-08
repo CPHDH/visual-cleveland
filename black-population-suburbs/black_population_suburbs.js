@@ -157,7 +157,7 @@ function doDataTable(data, container, years_covered){
 	        .html(function(d) { return d.value; });
 	
 	// add column totals to table
-	var cell_data ='<td><strong>TOTALS</strong></td>';
+	var cell_data ='<td><strong>Total for All Suburbs</strong></td>';
 	column_totals.forEach(function(obj){
 		var year = obj.year;
 		var population_total_sum = obj.total;
