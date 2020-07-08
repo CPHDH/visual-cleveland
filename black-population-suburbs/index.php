@@ -22,7 +22,7 @@ include '../common/header.php';
 		</nav>
 		<div id="data-visualization-container"></div>
 	</div>
-	<figcaption>Fig1: Interactive data visualization of African-American population changes in the city and suburbs of Cleveland, Ohio. Source: based on U.S. decennial census data, 1950 to 2010. Compiled by Mark Souther.<br><a download class="data-download" href="black_population_suburbs.csv">Download source data as .csv file</a>
+	<figcaption>Fig1: Interactive data visualization of African-American population changes in the city and suburbs of Cleveland, Ohio. Source: based on U.S. decennial census data, 1950 to 2010. Compiled by Mark Souther. <a download class="data-download" href="black_population_suburbs.csv">Download source data as .csv file</a>
 	</figcaption>
 	</figure>
 	<section class="explanation">

@@ -323,6 +323,7 @@ article.main{
 
 a.data-download{
 	text-decoration: underline;
+	display: inline-block;
 }
 
 section {

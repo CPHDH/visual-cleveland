@@ -24,7 +24,7 @@ include '../common/header.php';
 		</nav>
 		<div id="data-visualization-container"></div>
 	</div>
-	<figcaption>Fig1: Interactive data visualization of historical population change in Cleveland, Ohio. Source: based on U.S. decennial census data, 1800 to 2010. <br><a download class="data-download" href="data.csv">Download source data as .csv file</a>
+	<figcaption>Fig1: Interactive data visualization of historical population change in Cleveland, Ohio. Source: based on U.S. decennial census data, 1800 to 2010. <a download class="data-download" href="data.csv">Download source data as .csv file</a>
 	</figcaption>
 	</figure>
 	<section class="explanation">
