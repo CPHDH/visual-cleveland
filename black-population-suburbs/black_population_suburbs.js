@@ -156,17 +156,20 @@ function doDataTable(data, container, years_covered){
 	    .attr("style", "font-family: monospace") // sets the font style
 	        .html(function(d) { return d.value; });
 	
-	// @TODO: add column totals to table
-	var table = document.querySelector('table tbody');
-	console.log(table);
+	// add column totals to table
+	var cell_data ='<td><strong>TOTALS</strong></td>';
 	column_totals.forEach(function(obj){
 		var year = obj.year;
 		var population_total_sum = obj.total;
 		var population_black_sum = obj.black;
 		var percent_sum = round( (obj.black/obj.total) *100, 2 ) +"%";
-		var cell_data = '<div class="totals '+year+'">'+percent_sum + '<br><span class="fraction">' + population_black_sum + '/' + population_total_sum + '</span></div>';
-		console.log(cell_data);
-	})
+		cell_data += '<td><div class="totals '+year+'">'+percent_sum + '<br><span class="fraction">' + population_black_sum + '/' + population_total_sum + '</span></div></td>';
+		
+	});
+	var sum_row = document.createElement("tr");
+	sum_row.classList.add('totals');
+	sum_row.innerHTML=cell_data;
+	document.querySelector("table tbody").appendChild(sum_row); 
 	
 	// highlight max values for each column
 	years_covered.forEach(function(y){

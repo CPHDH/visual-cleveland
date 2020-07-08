@@ -12,14 +12,30 @@ table th{
 	text-align: left;
 }
 
-tr{
-	border-bottom: 1px solid #ccc;
-}
-
 tbody tr:hover{
 	background:#c61c6f;
 	color:#fff;
 	border-bottom: 1px solid #fff;
+}
+
+tr{
+	border-bottom: 1px solid #ccc;
+}
+
+tr.totals{
+	background:#ccc;
+	font-family: monospace;
+	border-top: 1em solid rgba(0,0,0,0);
+	border-bottom-color: rgba(0,0,0,0);
+}
+tr.totals td:first-child{
+	background-color: #e0e0e0;
+	color: #000;
+}
+tr.totals:hover{
+	background:#000;
+	color:#fff;
+	border-bottom-color: rgba(0,0,0,0);
 }
 
 td{
