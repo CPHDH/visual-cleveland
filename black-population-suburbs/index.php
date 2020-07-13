@@ -33,8 +33,14 @@ include '../common/header.php';
 		<section id="metadata" class="col">
 			<h4>References:</h4>
 			<ul>
-				<li>Gibson, Campbell (June 1998). "Population of the 100 Largest Cities and Other Urban Places in the United States: 1790 to 1990". U.S. Census Bureau. </li>
-				<li>"Profile of General Population and Housing Characteristics: 2010 Census Summary File 2". American FactFinder. U.S. Census Bureau.</li>
+				<li>Census of Population and Housing, 1950, 1960, 1970, 1980. Prepared by Northern Ohio Data & Information Service. The Urban Center. The College of Urban Affairs. Cleveland State University. Ca. 1985. Courtesy of Dr. Robert Wheeler, Associate Professor Emeritus of History, Cleveland State University.</li>
+				<li>U.S. Census Bureau. 1990 Census of Population and Housing. Population and Housing Unit Counts. CPH-2-37, Ohio. U.S. Government Printing Office. Washington, DC, 1990. 
+				<a href="https://www.census.gov/prod/cen1990/cph2/cph-2-37.pdf">www.census.gov/prod/cen1990/cph2/cph-2-37.pdf</a></li>
+				<li>U.S. Census Bureau. 2000 Census of Population and Housing. Population and Housing Unit Counts. PHC-3-37, Ohio. U.S. Government Printing Office. Washington, DC, 2003. <a href="https://www.census.gov/prod/cen2000/phc-3-37.pdf">www.census.gov/prod/cen2000/phc-3-37.pdf</a></li>
+				<li>U.S. Census Bureau. 2010 Census of Population and Housing. Population and Housing Unit Counts. CPH-2-37, Ohio. U.S. Government Printing Office. Washington, DC, 2012. <a href="https://www.census.gov/prod/cen2010/cph-2-37.pdf">www.census.gov/prod/cen2010/cph-2-37.pdf</a></li>
+				<li>Keating, W. Dennis. The Suburban Racial Dilemma: Race and Housing. Philadelphia: Temple University Press, 1994. </li>
+				<li>Michney, Todd M. Surrogate Suburbs: Race and Mobility in Cleveland, 1900-1980. Chapel Hill: University of North Carolina Press, 2017.</li>
+				<li>Wiese, Andrew. Places of Their Own: African American Suburbanization in the Twentieth Century. Chicago: University of Chicago Press, 2004.</li>
 			</ul>
 		</section>    
 	</section>
