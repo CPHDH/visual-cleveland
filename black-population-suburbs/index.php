@@ -16,8 +16,7 @@ include '../common/header.php';
 	<figure id="interactive">
 	<div class="inner">
 		<nav class="options">
-			<a id="bar-chart" href=""><span class="fa fa-bar-chart"></span> Bar Chart</a>
-			<a id="line-chart" href=""><span class="fa fa-line-chart"></span> Line Chart</a>
+			<a id="line-chart" href="" class="active"><span class="fa fa-line-chart"></span> Line Chart</a>
 			<a id="data-table" href=""><span class="fa fa-table"></span> Data Table</a>
 		</nav>
 		<div id="data-visualization-container"></div>

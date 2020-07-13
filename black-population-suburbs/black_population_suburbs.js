@@ -1,97 +1,48 @@
-// Variables
+// Configurations
 var suburbs_csv="black_population_suburbs.csv"; // required columns: City, _1950, _1960, _1970, etc (note underscore in front of each year)
-var city_csv="../census/data.csv"; // required columns: year, population
+var comparison_csv="black-population-city-v-suburbs.csv"; // required columns: same as above; first row is city, second row is suburbs (sum)
 var container="#data-visualization-container";
 var years_covered = ['1950','1960','1970','1980','1990','2000','2010']; // years that appear in both city and suburban data sets
-var city_name ="Cleveland";
 
 // Implementation
 document.addEventListener("DOMContentLoaded", function(event) { 
-
-	var city_data=[];
-	d3.csv(city_csv,function(data){
-		data.forEach(function(row){
-			if(years_covered.includes(row.year)){
-				city_data.push(row);
-			}
-		});
-	});	
-
+		
+	// default view: line chart
+	doLineChart(container,comparison_csv);
+		
+	// get suburbs data and set ui events
 	d3.csv(suburbs_csv,function(data){
 		var suburbs_list = getMunicipalities(data);
 		var suburbs_data = prepareData(data,years_covered);
 		addUIEvents(suburbs_data, container, years_covered);	
-	});	
-	
+	});		
 	
 });
 
-// Helpers
-function addUIEvents(suburbs_data, container, years_covered){
-	const uiButtons = document.querySelectorAll("figure#interactive nav a");
-	for (let i = 0; i < uiButtons.length; i++) {
-		uiButtons[i].addEventListener("click", function(e) {
-			e.preventDefault();
-
-			[].forEach.call(uiButtons, function(el) {
-			  el.classList.remove("active");
-			});
-			uiButtons[i].classList.add("active");
-			
-			var action = uiButtons[i].id;
-			if(action === 'data-table') doDataTable(suburbs_data, container, years_covered);
-			if(action === 'line-chart') doLineChart(suburbs_data, container);
-			if(action === 'bar-chart') doBarChart(suburbs_data, container);
-		});
-	}	
-}
-
-function getMunicipalities(data){
-	var sorted= data.sort(function (a,b) {return d3.ascending(a.City, b.City); });
-	var municipalities = sorted.map(row => row.City.trim()).filter((value, index, self) => self.indexOf(value) === index);
-	return municipalities;
-}
-
-function getDataForMunicipality(data,city_name){
-	let d = data.filter(function (row) {
-	    return row.City.trim() === city_name.trim();
+// LINE CHART
+function doLineChart(container, comparison_csv){
+	d3.select(container).html(''); // clear container
+	
+	d3.csv(comparison_csv,function(data){		
+		comparison_data = prepareData(data,years_covered);
+		// city data
+		var city_data = comparison_data[0];
+		var city_population_black = getObjectValuesBlack(city_data);
+		var city_population_total = getObjectValuesTotal(city_data);
+		var city_years = getObjectValuesYear(city_data)
+		console.log(city_population_black, city_population_total, city_years);
+		// suburbs data
+		var suburbs_data = comparison_data[1];
+		var suburbs_population_black = getObjectValuesBlack(suburbs_data);
+		var suburbs_population_total = getObjectValuesTotal(suburbs_data);
+		var suburbs_years = getObjectValuesYear(suburbs_data);
+		console.log(suburbs_population_black, suburbs_population_total, suburbs_years);
+		
 	});	
-	return d[0];
+	
 }
 
-function round(num, places) {
-    var multiplier = Math.pow(10, places);
-    return Math.round(num * multiplier) / multiplier;
-}
-
-function prepareData(data,years_covered){
-	var calculated = [];
-	data.forEach(function(row){
-		years_covered.forEach(function(y){
-			var y = '_'+y;
-			let value = row[y].split("/");
-			let black = value[0] ? Number(value[0]) : null;
-			let total = value[1] ? Number(value[1]) : null;
-			let percentage = (black !== null && total !== null) ? black/total : null;
-			row[y] = {
-				"population_black": black,
-				"population_total": total,
-				"percentage_black": percentage !== null ? round((percentage)*100,2) : '--'
-			}	
-						
-		});
-		calculated.push(row)
-	});
-	return calculated;
-}
-function doLineChart(data, container){
-	d3.select(container).html(''); // clear container
-}
-
-function doBarChart(data, container){
-	d3.select(container).html(''); // clear container
-}	
-
+// DATA TABLE
 function doDataTable(data, container, years_covered){
 	var c = years_covered.map(e => '_' + e);
 	c.unshift("City");
@@ -200,3 +151,89 @@ function doDataTable(data, container, years_covered){
 	});		
 }
 
+// HELPERS
+function addUIEvents(suburbs_data, container, years_covered){
+	const uiButtons = document.querySelectorAll("figure#interactive nav a");
+	for (let i = 0; i < uiButtons.length; i++) {
+		uiButtons[i].addEventListener("click", function(e) {
+			e.preventDefault();
+
+			[].forEach.call(uiButtons, function(el) {
+			  el.classList.remove("active");
+			});
+			uiButtons[i].classList.add("active");
+			
+			var action = uiButtons[i].id;
+			if(action === 'data-table') doDataTable(suburbs_data, container, years_covered);
+			if(action === 'line-chart') doLineChart(container,comparison_csv);
+		});
+	}	
+}
+
+function getMunicipalities(data){
+	var sorted= data.sort(function (a,b) {return d3.ascending(a.City, b.City); });
+	var municipalities = sorted.map(row => row.City.trim()).filter((value, index, self) => self.indexOf(value) === index);
+	return municipalities;
+}
+
+function getDataForMunicipality(data,city_name){
+	let d = data.filter(function (row) {
+	    return row.City.trim() === city_name.trim();
+	});	
+	return d[0];
+}
+
+function round(num, places) {
+    var multiplier = Math.pow(10, places);
+    return Math.round(num * multiplier) / multiplier;
+}
+
+function prepareData(data,years_covered){
+	var calculated = [];
+	data.forEach(function(row){
+		years_covered.forEach(function(y){
+			var year = y;
+			var y = '_'+year;
+			let value = row[y].split("/");
+			let black = value[0] ? Number(value[0]) : null;
+			let total = value[1] ? Number(value[1]) : null;
+			let percentage = (black !== null && total !== null) ? black/total : null;
+			row[y] = {
+				"year": year,
+				"population_black": black,
+				"population_total": total,
+				"percentage_black": percentage !== null ? round((percentage)*100,2) : '--'
+			}	
+						
+		});
+		calculated.push(row)
+	});
+	return calculated;
+}
+
+function getObjectValuesYear(data){
+	return Object.keys(data).map(function(key) {
+		return data[key].year;
+
+	}).filter(function(value){
+		return value != null;
+	});	
+}
+
+function getObjectValuesBlack(data){
+	return Object.keys(data).map(function(key) {
+		return data[key].population_black;
+
+	}).filter(function(v){
+		return v != null;
+	});	
+}
+
+function getObjectValuesTotal(data){
+	return Object.keys(data).map(function(key) {
+		return data[key].population_total;
+
+	}).filter(function(v){
+		return v != null;
+	});	
+}
