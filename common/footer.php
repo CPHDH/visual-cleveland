@@ -4,15 +4,7 @@
 	<div class="copyright"><a title="CSU Center for Public History + Digital Humanities" href="http://csudigitalhumanities.org"><img alt="CSU Center for Public History + Digital Humanities" src="<?php echo $site;?>/images/logo.png"></a><!--&copy; <?php echo date('Y');?> CSU Center for Public History + Digital Humanities--></div>
 	
 </footer>
-<!-- Leaflet -->
-<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-crossorigin=""></script>
-<!-- Leaflet Marker Cluster -->
-<script src='https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js'></script>
-<!-- D3 -->
-<script src="//d3js.org/d3.v3.min.js"></script>
-<script src="<?php echo $site;?>/javascripts/d3tip.js"></script>
+
 <!-- JQuery (UI) -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>

@@ -42,5 +42,7 @@ include '../common/header.php';
 </section>
 <?php
 include '../common/footer.php'; 
-?>	
+?>
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="<?php echo $site;?>/javascripts/d3tip.js"></script>
 <script src="black_population_suburbs.js"></script>

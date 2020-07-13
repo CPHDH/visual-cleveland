@@ -45,4 +45,7 @@ include '../common/header.php';
 <?php
 include '../common/footer.php'; 
 ?>	
+<!-- D3 -->
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="<?php echo $site;?>/javascripts/d3tip.js"></script>
 <script src="census.js"></script>
