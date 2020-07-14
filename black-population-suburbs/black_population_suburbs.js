@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var suburbs_list = getMunicipalities(data);
 		var suburbs_data = prepareData(data,years_covered);
 		addUIEvents(suburbs_data, container, years_covered);	
-	});		
+	});
 	
 });
 
@@ -24,20 +24,75 @@ function doLineChart(container, comparison_csv){
 	d3.select(container).html(''); // clear container
 	
 	d3.csv(comparison_csv,function(data){		
+
+		/*
+		****************
+		Prepare the data
+		****************	
+		*/	
+			
 		comparison_data = prepareData(data,years_covered);
+		
 		// city data
 		var city_data = comparison_data[0];
 		var city_population_black = getObjectValuesBlack(city_data);
 		var city_population_total = getObjectValuesTotal(city_data);
 		var city_years = getObjectValuesYear(city_data)
-		console.log(city_population_black, city_population_total, city_years);
 		// suburbs data
 		var suburbs_data = comparison_data[1];
 		var suburbs_population_black = getObjectValuesBlack(suburbs_data);
 		var suburbs_population_total = getObjectValuesTotal(suburbs_data);
 		var suburbs_years = getObjectValuesYear(suburbs_data);
-		console.log(suburbs_population_black, suburbs_population_total, suburbs_years);
+
+		/*
+		**********************
+		Set up the chart scale
+		**********************	
+		*/
+	    	
+		// D3 margin convention  
+		var margin = {top: 40, right: 30, bottom: 30, left: 60},
+		    height = 500 - margin.top - margin.bottom,
+		    width = parseInt(d3.select(container).style('width'), 10),
+		    width = width - margin.left - margin.right
 		
+		// X scale uses the (min/max) years of our city data
+		var xScale = d3.scaleLinear()
+		    .domain([d3.min(city_years), d3.max(city_years)]) 
+		    .range([0, width]);
+		
+		// Y scale uses the black suburbs population (min) and the city total population (max)
+		var yScale = d3.scaleLinear()
+		    .domain([d3.min(suburbs_population_black), d3.max(city_population_total)]) 
+		    .range([height, 0]);  
+		    				
+		// Add the SVG to the container
+		var svg = d3.select(container).append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+			.append("g")
+		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+		// Append the x axis
+		svg.append("g")
+		    .attr("class", "x axis")
+		    .attr("transform", "translate(0," + height + ")")
+		    .call(d3.axisBottom(xScale)
+		    	.ticks(city_years.length) // don't add interval years to the range; just use the available years
+		    	.tickFormat(d3.format("Y"))); // no commas; format as years
+		
+		// Append the y axis
+		svg.append("g")
+		    .attr("class", "y axis")
+		    .call(d3.axisLeft(yScale)); 
+		    
+		/*
+		******************
+		Add the data lines
+		******************
+		*/		    
+		
+		// @TODO...
 	});	
 	
 }
