@@ -1,3 +1,16 @@
+/* chart lines */
+.line-total {
+    stroke-width: 1;
+    stroke: #999;
+    fill: none;
+}
+.line-black {
+    stroke-width: 2;
+    stroke: #c61c6f;
+    fill: none;
+}
+
+/* end chart lines */
 #chart {
 	width:100%;
 }

@@ -8,7 +8,7 @@ var years_covered = ['1950','1960','1970','1980','1990','2000','2010']; // years
 document.addEventListener("DOMContentLoaded", function(event) { 
 		
 	// default view: line chart
-	doLineChart(container,comparison_csv);
+	doLineChart(container,comparison_csv,false);
 		
 	// get suburbs data and set ui events
 	d3.csv(suburbs_csv,function(data){
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 // LINE CHART
-function doLineChart(container, comparison_csv){
+function doLineChart(container, comparison_csv, includeTotalPopulations=false){
 	d3.select(container).html(''); // clear container
 	
 	d3.csv(comparison_csv,function(data){		
@@ -37,12 +37,14 @@ function doLineChart(container, comparison_csv){
 		var city_data = comparison_data[0];
 		var city_population_black = getObjectValuesBlack(city_data);
 		var city_population_total = getObjectValuesTotal(city_data);
-		var city_years = getObjectValuesYear(city_data)
+		var city_years = getObjectValuesYear(city_data);
+		var city_data_charting = cityChartingData(city_years,city_population_total,city_population_black);
 		// suburbs data
 		var suburbs_data = comparison_data[1];
 		var suburbs_population_black = getObjectValuesBlack(suburbs_data);
 		var suburbs_population_total = getObjectValuesTotal(suburbs_data);
 		var suburbs_years = getObjectValuesYear(suburbs_data);
+		var suburbs_data_charting = cityChartingData(suburbs_years,suburbs_population_total,suburbs_population_black);
 
 		/*
 		**********************
@@ -61,9 +63,10 @@ function doLineChart(container, comparison_csv){
 		    .domain([d3.min(city_years), d3.max(city_years)]) 
 		    .range([0, width]);
 		
-		// Y scale uses the black suburbs population (min) and the city total population (max)
+		// Y scale uses 0 (min) and the suburbs total population (max) OR city black population, depending on options
+		var maxScale = includeTotalPopulations ? d3.max(suburbs_population_total) : d3.max(city_population_black);
 		var yScale = d3.scaleLinear()
-		    .domain([d3.min(suburbs_population_black), d3.max(city_population_total)]) 
+		    .domain([0, maxScale]) 
 		    .range([height, 0]);  
 		    				
 		// Add the SVG to the container
@@ -90,9 +93,44 @@ function doLineChart(container, comparison_csv){
 		******************
 		Add the data lines
 		******************
-		*/		    
+		*/
 		
-		// @TODO...
+		// Line generators
+		var lineGeneratorTotal = d3.line()
+		    .x(function(d) { return xScale(d.year); })
+		    .y(function(d) { return yScale(d.total); });
+
+		var lineGeneratorBlack = d3.line()
+		    .x(function(d) { return xScale(d.year); })
+		    .y(function(d) { return yScale(d.black); });
+		
+		
+		// City Data
+		svg.append("path")
+		  .datum(city_data_charting)
+		  .attr("class", "line-black city")
+		  .attr("stroke-dasharray","3,3")
+		  .attr("d", lineGeneratorBlack);
+		if(includeTotalPopulations){
+			svg.append("path")
+			  .datum(city_data_charting)
+			  .attr("class", "line-total city")
+			  .attr("stroke-dasharray","3,3")
+			  .attr("d", lineGeneratorTotal);				
+		}
+		
+		// Suburbs Data
+		svg.append("path")
+		  .datum(suburbs_data_charting)
+		  .attr("class", "line-black suburbs")
+		  .attr("d", lineGeneratorBlack)		
+		if(includeTotalPopulations){
+			svg.append("path")
+			  .datum(suburbs_data_charting)
+			  .attr("class", "line-total suburbs")
+			  .attr("d", lineGeneratorTotal);				
+		}
+
 	});	
 	
 }
@@ -264,6 +302,18 @@ function prepareData(data,years_covered){
 		calculated.push(row)
 	});
 	return calculated;
+}
+
+function cityChartingData(years,total,black){
+	var obj = new Object;
+	obj = years.map((v, i) => {
+		return {
+			year:Number(v),
+			total:total[i],
+			black:black[i]
+		}
+	});
+	return obj;
 }
 
 function getObjectValuesYear(data){
