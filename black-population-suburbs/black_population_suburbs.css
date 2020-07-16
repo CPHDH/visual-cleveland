@@ -26,7 +26,16 @@
 }
 
 .x.axis .domain{
-	stroke:transparent
+/* 	stroke:transparent */
+}
+
+.line-label{
+	font-size: 12px;
+	fill:#999
+}
+
+.line-label.black{
+	fill: #c61c6f;
 }
 
 /* table */

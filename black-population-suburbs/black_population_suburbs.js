@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 // LINE CHART
-function doLineChart(container, comparison_csv, includeTotalPopulations = true, includeCityPopulations = true){
+function doLineChart(container, comparison_csv, includeTotalPopulations = false, includeCityPopulations = true){
 	d3.select(container).html(''); // clear container
 	
 	d3.csv(comparison_csv,function(data){		
@@ -54,7 +54,7 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = true, 
 		*/
 	    	
 		// D3 margin convention  
-		var margin = {top: 40, right: 30, bottom: 30, left: 60},
+		var margin = {top: 40, right: 110, bottom: 30, left: 60},
 		    height = 500 - margin.top - margin.bottom,
 		    width = parseInt(d3.select(container).style('width'), 10),
 		    width = width - margin.left - margin.right
@@ -186,9 +186,73 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = true, 
 		}
 
 		/*
-		***************************
-		Add the labels and tooltips
-		***************************
+		**************
+		Add the labels
+		**************
+		*/
+		var textOffsetX = (coords) => {return coords+5}
+		var textOffsetY = (coords) => {return coords+5}
+		
+		var suburbs_total_coords = suburbstotal ? [suburbstotal._groups[0][0].pathSegList[years_covered.length-1].x,suburbstotal._groups[0][0].pathSegList[years_covered.length-1].y] : null
+		if(suburbs_total_coords){
+			svg.append("text")
+			    .attr("x", textOffsetX(suburbs_total_coords[0]))
+			    .attr("y", textOffsetY(suburbs_total_coords[1]))
+			    .attr("class", "line-label")
+			    .text('Suburbs (Total)')
+			    .attr("opacity",0)
+			    .transition()
+			    .duration(1500)
+				.ease(d3.easeCubicIn)
+				.attr("opacity", 1)			    
+		}
+		
+		var city_total_coords = citytotal ? [citytotal._groups[0][0].pathSegList[years_covered.length-1].x,citytotal._groups[0][0].pathSegList[years_covered.length-1].y] : null
+		if(city_total_coords){
+		    svg.append("text")
+			    .attr("x", textOffsetX(city_total_coords[0]))
+			    .attr("y", textOffsetY(city_total_coords[1]))
+			    .attr("class", "line-label")
+			    .text(city_name + ' (Total)')	
+			    .attr("opacity",0)
+			    .transition()
+			    .duration(1500)
+				.ease(d3.easeCubicIn)
+				.attr("opacity", 1)				    		
+		}
+		
+		var suburbs_black_coords = suburbsblack ? [suburbsblack._groups[0][0].pathSegList[years_covered.length-1].x,suburbsblack._groups[0][0].pathSegList[years_covered.length-1].y] : null
+		if(suburbs_black_coords){
+			svg.append("text")
+			    .attr("x", textOffsetX(suburbs_black_coords[0]))
+			    .attr("y", textOffsetY(suburbs_black_coords[1]))
+			    .attr("class", "line-label black")
+			    .text('Suburbs (Black)')	
+			    .attr("opacity",0)
+			    .transition()
+			    .duration(1500)
+				.ease(d3.easeCubicIn)
+				.attr("opacity", 1)				    		
+		}
+		
+		var city_black_coords = cityblack ? [cityblack._groups[0][0].pathSegList[years_covered.length-1].x,cityblack._groups[0][0].pathSegList[years_covered.length-1].y] : null
+		if(city_black_coords){
+			svg.append("text")
+			    .attr("x", textOffsetX(city_black_coords[0]))
+			    .attr("y", textOffsetY(city_black_coords[1]))
+			    .attr("class", "line-label black")
+			    .text(city_name + ' (Black)')	
+			    .attr("opacity",0)
+			    .transition()
+			    .duration(1500)
+				.ease(d3.easeCubicIn)
+				.attr("opacity", 1)				    	
+		}
+
+		/*
+		****************
+		Add the tooltips
+		****************
 		*/
 		
 		// @TODO!
@@ -214,7 +278,7 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = true, 
 			}
 			var ui_totals_label = document.createElement("label");
 				ui_totals_label.setAttribute('for', 'includeTotals');
-				ui_totals_label.innerHTML ='Include Total (Black and Non-Black) Population for Selected View';
+				ui_totals_label.innerHTML ='Include Total (Black and Non-Black) Populations for Selected View';
 			var ui_totals_container = document.createElement('div');
 				ui_totals_container.appendChild(ui_totals);
 				ui_totals_container.appendChild(ui_totals_label);
