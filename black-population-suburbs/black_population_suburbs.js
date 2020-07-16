@@ -3,12 +3,13 @@ var suburbs_csv="black_population_suburbs.csv"; // required columns: City, _1950
 var comparison_csv="black-population-city-v-suburbs.csv"; // required columns: same as above; first row is city, second row is suburbs (sum)
 var container="#data-visualization-container";
 var years_covered = ['1950','1960','1970','1980','1990','2000','2010']; // years that appear in both city and suburban data sets
+var city_name = "Cleveland";
 
 // Implementation
 document.addEventListener("DOMContentLoaded", function(event) { 
 		
 	// default view: line chart
-	doLineChart(container,comparison_csv,false);
+	doLineChart(container,comparison_csv);
 		
 	// get suburbs data and set ui events
 	d3.csv(suburbs_csv,function(data){
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 // LINE CHART
-function doLineChart(container, comparison_csv, includeTotalPopulations=false){
+function doLineChart(container, comparison_csv, includeTotalPopulations = true, includeCityPopulations = true){
 	d3.select(container).html(''); // clear container
 	
 	d3.csv(comparison_csv,function(data){		
@@ -61,10 +62,10 @@ function doLineChart(container, comparison_csv, includeTotalPopulations=false){
 		// X scale uses the (min/max) years of our city data
 		var xScale = d3.scaleLinear()
 		    .domain([d3.min(city_years), d3.max(city_years)]) 
-		    .range([0, width]);
+		    .range([10, width-10]);
 		
-		// Y scale uses 0 (min) and the suburbs total population (max) OR city black population, depending on options
-		var maxScale = includeTotalPopulations ? d3.max(suburbs_population_total) : d3.max(city_population_black);
+		// Y scale uses 0 (min) and the suburbs total population (max) OR city/suburban black population, depending on options
+		var maxScale = includeTotalPopulations ? d3.max(suburbs_population_total) : includeCityPopulations ? d3.max(city_population_black) : d3.max(suburbs_population_black);
 		var yScale = d3.scaleLinear()
 		    .domain([0, maxScale]) 
 		    .range([height, 0]);  
@@ -104,32 +105,147 @@ function doLineChart(container, comparison_csv, includeTotalPopulations=false){
 		    .x(function(d) { return xScale(d.year); })
 		    .y(function(d) { return yScale(d.black); });
 		
-		
-		// City Data
-		svg.append("path")
-		  .datum(city_data_charting)
-		  .attr("class", "line-black city")
-		  .attr("stroke-dasharray","3,3")
-		  .attr("d", lineGeneratorBlack);
-		if(includeTotalPopulations){
-			svg.append("path")
-			  .datum(city_data_charting)
-			  .attr("class", "line-total city")
-			  .attr("stroke-dasharray","3,3")
-			  .attr("d", lineGeneratorTotal);				
+		// City Data (dashed lines)
+		if(includeCityPopulations){
+			
+			// visible (dashed) line
+			var cityblack = svg.append("path")
+				.datum(city_data_charting)
+				.attr("class", "line-black city")
+				.attr("d", lineGeneratorBlack)
+				.attr("stroke-dasharray", "3 3")
+							
+				// duplicate (line mask)
+				var cityblack_mask = svg.append("path")
+				.datum(city_data_charting)
+				.attr("class", "line-mask city")
+				.attr("d", lineGeneratorBlack)
+				
+				// reverse animate the solid line on top of the dashed line to simulate dash animation
+				cityblack_mask.attr("stroke-dasharray",cityblack_mask.node().getTotalLength() + " " + cityblack_mask.node().getTotalLength())
+				.attr("stroke-dashoffset", 0)
+				.transition()
+				.duration(1000)
+				.ease(d3.easeLinear)
+				.attr("stroke-dashoffset", "-"+cityblack_mask.node().getTotalLength())
+				
+				
+			  
+			if(includeTotalPopulations){
+				
+				// visible (dashed) line
+				var citytotal = svg.append("path")
+					.datum(city_data_charting)
+					.attr("class", "line-total city")
+					.attr("d", lineGeneratorTotal)
+					.attr("stroke-dasharray", "3 3")
+				  
+					// duplicate (line mask)
+					var citytotal_mask = svg.append("path")
+					.datum(city_data_charting)
+					.attr("class", "line-mask city")
+					.attr("d", lineGeneratorTotal)
+					
+					// reverse animate the solid line on top of the dashed line to simulate dash animation
+					citytotal_mask.attr("stroke-dasharray",citytotal_mask.node().getTotalLength() + " " + citytotal_mask.node().getTotalLength())
+					.attr("stroke-dashoffset", 0)
+					.transition()
+					.duration(1000)
+					.ease(d3.easeLinear)
+					.attr("stroke-dashoffset", "-"+citytotal_mask.node().getTotalLength())
+					
+			}			
 		}
 		
-		// Suburbs Data
-		svg.append("path")
+		// Suburbs Data (solid lines)
+		var suburbsblack = svg.append("path")
 		  .datum(suburbs_data_charting)
 		  .attr("class", "line-black suburbs")
-		  .attr("d", lineGeneratorBlack)		
+		  .attr("d", lineGeneratorBlack)
+	  
+		  // animate
+		  suburbsblack.attr("stroke-dasharray",suburbsblack.node().getTotalLength() + " " + suburbsblack.node().getTotalLength())
+			.attr("stroke-dashoffset", suburbsblack.node().getTotalLength())
+	    	.transition()
+			.duration(1000)
+			.ease(d3.easeLinear)
+			.attr("stroke-dashoffset", 0)
+						  	
 		if(includeTotalPopulations){
-			svg.append("path")
+			var suburbstotal = svg.append("path")
 			  .datum(suburbs_data_charting)
 			  .attr("class", "line-total suburbs")
-			  .attr("d", lineGeneratorTotal);				
+			  .attr("d", lineGeneratorTotal)
+			  // animate
+			  suburbstotal.attr("stroke-dasharray",suburbstotal.node().getTotalLength() + " " + suburbstotal.node().getTotalLength())
+				.attr("stroke-dashoffset", suburbstotal.node().getTotalLength())
+		    	.transition()
+				.duration(1000)
+				.ease(d3.easeLinear)
+				.attr("stroke-dashoffset", 0)	  			
 		}
+
+		/*
+		***************************
+		Add the labels and tooltips
+		***************************
+		*/
+		
+		// @TODO!
+				
+		
+		/*
+		****************
+		Add the controls
+		****************
+		*/
+		
+		// totals controls
+		var ui_totals = document.createElement("input");
+			ui_totals.setAttribute('type', 'checkbox');
+			ui_totals.setAttribute('name', 'includeTotals');
+			ui_totals.setAttribute('id', 'includeTotals');
+			ui_totals.setAttribute('value', 1);
+			if(includeTotalPopulations) ui_totals.setAttribute('checked', 1);
+			ui_totals.onchange = function(e){
+				includeTotalPopulations = e.target.checked
+				// reload the chart
+				doLineChart(container, comparison_csv, includeTotalPopulations, includeCityPopulations)
+			}
+			var ui_totals_label = document.createElement("label");
+				ui_totals_label.setAttribute('for', 'includeTotals');
+				ui_totals_label.innerHTML ='Include Total (Black and Non-Black) Population for Selected View';
+			var ui_totals_container = document.createElement('div');
+				ui_totals_container.appendChild(ui_totals);
+				ui_totals_container.appendChild(ui_totals_label);
+				
+		// city controls
+		var ui_city = document.createElement("input");
+			ui_city.setAttribute('type', 'checkbox');
+			ui_city.setAttribute('name', 'includeCity');
+			ui_city.setAttribute('id', 'includeCity');
+			ui_city.setAttribute('value', 1);
+			if(includeCityPopulations) ui_city.setAttribute('checked', 1);
+			ui_city.onchange = function(e){
+				includeCityPopulations = e.target.checked
+				// reload the chart
+				doLineChart(container, comparison_csv, includeTotalPopulations, includeCityPopulations)
+			}
+			var ui_city_label = document.createElement("label");
+				ui_city_label.setAttribute('for', 'includeCity');
+				ui_city_label.innerHTML ='Include '+city_name+' (Non-Suburban) Black Population';	
+			var ui_city_container = document.createElement('div');
+				ui_city_container.appendChild(ui_city);
+				ui_city_container.appendChild(ui_city_label);			
+		
+		// container div
+		var toggles = document.createElement('div');
+			toggles.setAttribute('id', 'toggles');
+			toggles.appendChild(ui_city_container);
+			toggles.appendChild(ui_totals_container);
+		
+		// output
+		document.querySelector(container).appendChild(toggles)
 
 	});	
 	
