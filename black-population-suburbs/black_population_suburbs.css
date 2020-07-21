@@ -175,6 +175,9 @@ figure#interactive .inner{
 	width: 100%;
 	padding: .5em 0;
 }
+figure#interactive.secondary .inner{
+	min-height: 0;
+}
 
 figcaption{
 	font-size: .8em;

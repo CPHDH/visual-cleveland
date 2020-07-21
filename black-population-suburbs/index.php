@@ -15,15 +15,9 @@ include '../common/header.php';
 	<div class="section-title"><h2><?php echo $subtitle;?></h2> <span class="byline">by <strong><?php echo $author;?></strong></span></div>
 	<figure id="interactive">
 	<div class="inner">
-		<nav class="options">
-			<a id="line-chart" href="" class="active"><span class="fa fa-line-chart"></span> Line Chart</a>
-			<a id="data-table" href=""><span class="fa fa-table"></span> Data Table</a>
-		</nav>
-
-		<div id="data-visualization-container"></div>
-		
+		<div id="data-visualization-container"></div>		
 	</div>
-	<figcaption>Fig1: Interactive data visualization of African-American population changes in the city and suburbs of Cleveland, Ohio. Source: based on U.S. decennial census data, 1950 to 2010. Compiled by Mark Souther. <a download class="data-download" href="black_population_suburbs.csv">Download source data as .csv file</a>
+	<figcaption>Fig1: Interactive chart depicting African-American population changes in the city and suburbs of Cleveland, Ohio. Source: based on U.S. decennial census data, 1950 to 2010. Compiled by Mark Souther. <a download class="data-download" href="black-population-city-v-suburbs.csv">Download source data as .csv file</a>
 	</figcaption>
 	</figure>
 	<section class="explanation">
@@ -46,10 +40,21 @@ include '../common/header.php';
 		</section>    
 	</section>
 
+	<figure id="interactive" class="secondary">
+	<div class="inner">
+		<nav class="options">
+			<a id="data-table-suburbs" class="active" href=""><span class="fa fa-table"></span> Data Table: Suburbs</a>
+			<a id="data-table-county" href=""><span class="fa fa-table"></span> Data Table: City vs. Suburbs</a>
+		</nav>
+
+		<div id="data-visualization-container-2"></div>
+	</div>
+	<figcaption>Fig2: Interactive tabular data for African-American population changes in the city and suburbs of Cleveland, Ohio. Source: based on U.S. decennial census data, 1950 to 2010. Compiled by Mark Souther. <a download class="data-download" href="black_population_suburbs.csv">Download source data as .csv file</a>
+	</figcaption>
+	</figure>
 </section>
 <?php
 include '../common/footer.php'; 
 ?>
 <script src="//d3js.org/d3.v4.min.js"></script>
-<script src="<?php echo $site;?>/javascripts/d3tip.js"></script>
 <script src="black_population_suburbs.js"></script>

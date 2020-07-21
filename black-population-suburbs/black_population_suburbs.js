@@ -1,21 +1,24 @@
 // Configurations
 var suburbs_csv="black_population_suburbs.csv"; // required columns: City, _1950, _1960, _1970, etc (note underscore in front of each year)
 var comparison_csv="black-population-city-v-suburbs.csv"; // required columns: same as above; first row is city, second row is suburbs (sum)
-var container="#data-visualization-container";
+var container1="#data-visualization-container";
+var container2="#data-visualization-container-2";
 var years_covered = ['1950','1960','1970','1980','1990','2000','2010']; // years that appear in both city and suburban data sets
 var city_name = "Cleveland";
 
 // Implementation
 document.addEventListener("DOMContentLoaded", function(event) { 
 		
-	// default view: line chart
-	doLineChart(container,comparison_csv);
+	// first container: line chart (comparison_csv)
+	doLineChart(container1,comparison_csv);
 		
-	// get suburbs data and set ui events
 	d3.csv(suburbs_csv,function(data){
-		var suburbs_list = getMunicipalities(data);
 		var suburbs_data = prepareData(data,years_covered);
-		addUIEvents(suburbs_data, container, years_covered);	
+		
+		// second container: data tables (suburbs_csv, comparison_csv)
+		doDataTable(suburbs_data,container2,years_covered);
+		
+		addTableUIEvents(suburbs_data,container2,years_covered);	
 	});
 	
 });
@@ -54,7 +57,7 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = false,
 		*/
 	    	
 		// D3 margin convention  
-		var margin = {top: 40, right: 110, bottom: 30, left: 60},
+		var margin = {top: 20, right: 110, bottom: 30, left: 60},
 		    height = 500 - margin.top - margin.bottom,
 		    width = parseInt(d3.select(container).style('width'), 10),
 		    width = width - margin.left - margin.right
@@ -255,6 +258,8 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = false,
 		****************
 		*/
 		
+		
+		
 		// @TODO!
 				
 		
@@ -316,7 +321,7 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = false,
 }
 
 // DATA TABLE
-function doDataTable(data, container, years_covered){
+function doDataTable(data, container, years_covered, summaryLabel="Total for all suburbs", highlights=true){
 	var c = years_covered.map(e => '_' + e);
 	c.unshift("City");
 	var columns = c;
@@ -381,7 +386,7 @@ function doDataTable(data, container, years_covered){
 	        .html(function(d) { return d.value; });
 	
 	// add column totals to table
-	var cell_data ='<td><strong>Total for All Suburbs</strong></td>';
+	var cell_data ='<td><strong>'+summaryLabel+'</strong></td>';
 	column_totals.forEach(function(obj){
 		var year = obj.year;
 		var population_total_sum = obj.total;
@@ -396,36 +401,39 @@ function doDataTable(data, container, years_covered){
 	document.querySelector("table tbody").appendChild(sum_row); 
 	
 	// highlight max values for each column
-	years_covered.forEach(function(y){
-		let black_max = 0;
-		let percent_max = 0;
-		let cells = document.querySelectorAll('table div._'+y);
-		cells.forEach(function(cell,i){
-			if(Number(cell.dataset.black) >= black_max){
-				black_max = Number(cell.dataset.black);
-			};
-			if(Number(cell.dataset.percent) >= percent_max){
-				percent_max = Number(cell.dataset.percent);
-			};				
-		});
-		
-		let pm = document.querySelector('table div._'+y+'[data-percent="'+percent_max+'"]');
-		pm.classList.add('max-percent');
-		pm.setAttribute('data-title',"Highest percentage, "+y);
-
-		let bm = document.querySelector('table div._'+y+'[data-black="'+black_max+'"]');
-		bm.classList.add('max-black');
-		if(bm.classList.contains('max-percent')){
-			bm.setAttribute('data-title',"Highest percentage & largest black population, "+y);
-		}else{
-			bm.setAttribute('data-title',"Largest black population, "+y);
-		}			
-		
-	});		
+	if(highlights){
+		years_covered.forEach(function(y){
+			let black_max = 0;
+			let percent_max = 0;
+			let cells = document.querySelectorAll('table div._'+y);
+			cells.forEach(function(cell,i){
+				if(Number(cell.dataset.black) >= black_max){
+					black_max = Number(cell.dataset.black);
+				};
+				if(Number(cell.dataset.percent) >= percent_max){
+					percent_max = Number(cell.dataset.percent);
+				};				
+			});
+			
+			let pm = document.querySelector('table div._'+y+'[data-percent="'+percent_max+'"]');
+			pm.classList.add('max-percent');
+			pm.setAttribute('data-title',"Highest percentage, "+y);
+	
+			let bm = document.querySelector('table div._'+y+'[data-black="'+black_max+'"]');
+			bm.classList.add('max-black');
+			if(bm.classList.contains('max-percent')){
+				bm.setAttribute('data-title',"Highest percentage & largest black population, "+y);
+			}else{
+				bm.setAttribute('data-title',"Largest black population, "+y);
+			}			
+			
+		});			
+	}
+	
 }
 
 // HELPERS
-function addUIEvents(suburbs_data, container, years_covered){
+function addTableUIEvents(suburbs_data, container, years_covered){
 	const uiButtons = document.querySelectorAll("figure#interactive nav a");
 	for (let i = 0; i < uiButtons.length; i++) {
 		uiButtons[i].addEventListener("click", function(e) {
@@ -437,8 +445,15 @@ function addUIEvents(suburbs_data, container, years_covered){
 			uiButtons[i].classList.add("active");
 			
 			var action = uiButtons[i].id;
-			if(action === 'data-table') doDataTable(suburbs_data, container, years_covered);
-			if(action === 'line-chart') doLineChart(container,comparison_csv);
+			if(action === 'data-table-suburbs'){
+				doDataTable(suburbs_data, container, years_covered);
+			} 
+			if(action === 'data-table-county'){
+				d3.csv(comparison_csv,function(data){
+					var county_data = prepareData(data,years_covered);				
+					doDataTable(county_data, container, years_covered, "Total for Cuyahoga County",false);
+				});
+			}
 		});
 	}	
 }
