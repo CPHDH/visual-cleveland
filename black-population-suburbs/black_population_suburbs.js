@@ -283,7 +283,7 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = false,
 			}
 			var ui_totals_label = document.createElement("label");
 				ui_totals_label.setAttribute('for', 'includeTotals');
-				ui_totals_label.innerHTML ='Include Total (Black and Non-Black) Populations for Selected View';
+				ui_totals_label.innerHTML ='Include Total (Black and Non-Black) Populations for Selected View <span></span><span></span>';
 			var ui_totals_container = document.createElement('div');
 				ui_totals_container.appendChild(ui_totals);
 				ui_totals_container.appendChild(ui_totals_label);
@@ -302,7 +302,7 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = false,
 			}
 			var ui_city_label = document.createElement("label");
 				ui_city_label.setAttribute('for', 'includeCity');
-				ui_city_label.innerHTML ='Include '+city_name+' (Non-Suburban) Black Population';	
+				ui_city_label.innerHTML ='Include '+city_name+' (Non-Suburban) Black Population <span></span>';	
 			var ui_city_container = document.createElement('div');
 				ui_city_container.appendChild(ui_city);
 				ui_city_container.appendChild(ui_city_label);			

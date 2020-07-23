@@ -24,6 +24,39 @@
 	margin:0 0 0 50px;
 	font-size: 12px;
 }
+@media all and (min-width:480px){
+#data-visualization-container #toggles label[for="includeCity"] span{
+	content:'';
+	width: 30px;
+	height: 0;
+	display: inline-block;
+	vertical-align: middle;
+	border: 1px dashed #c61c6f;
+	margin-left: 5px;	
+}
+@media all and (min-width:512px){
+	#data-visualization-container #toggles label[for="includeTotals"] span:last-child{
+		content:'';
+		width: 30px;
+		height: 0;
+		display: inline-block;
+		vertical-align: middle;
+		border: 1px solid #777;
+		margin-left: 5px;	
+	}	
+}
+
+
+#data-visualization-container #toggles label[for="includeTotals"] span:first-child{
+	content:'';
+	width: 30px;
+	height: 0;
+	display: inline-block;
+	vertical-align: middle;
+	border: 1px dashed #777;
+	margin-left: 3px;	
+}
+}
 
 .x.axis .domain{
 /* 	stroke:transparent */
