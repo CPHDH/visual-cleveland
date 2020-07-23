@@ -321,7 +321,10 @@ function doLineChart(container, comparison_csv, includeTotalPopulations = false,
 }
 
 // DATA TABLE
-function doDataTable(data, container, years_covered, summaryLabel="Total for all suburbs", highlights=true){
+function doDataTable(data, container, years_covered, summaryLabel="Total for all suburbs", highlightControls=true, highlightPopulationMax=false, highlightPercentageMax=false){
+	
+	d3.select(container).html(''); // clear container
+	
 	var c = years_covered.map(e => '_' + e);
 	c.unshift("City");
 	var columns = c;
@@ -335,7 +338,6 @@ function doDataTable(data, container, years_covered, summaryLabel="Total for all
 		}
 	});
 
-	d3.select(container).html(''); // clear container
 	var table = d3.select(container).append("table"),
 	    thead = table.append("thead"),
 	    tbody = table.append("tbody");
@@ -401,7 +403,7 @@ function doDataTable(data, container, years_covered, summaryLabel="Total for all
 	document.querySelector("table tbody").appendChild(sum_row); 
 	
 	// highlight max values for each column
-	if(highlights){
+	if(highlightControls){
 		years_covered.forEach(function(y){
 			let black_max = 0;
 			let percent_max = 0;
@@ -414,20 +416,77 @@ function doDataTable(data, container, years_covered, summaryLabel="Total for all
 					percent_max = Number(cell.dataset.percent);
 				};				
 			});
-			
-			let pm = document.querySelector('table div._'+y+'[data-percent="'+percent_max+'"]');
-			pm.classList.add('max-percent');
-			pm.setAttribute('data-title',"Highest percentage, "+y);
-	
-			let bm = document.querySelector('table div._'+y+'[data-black="'+black_max+'"]');
-			bm.classList.add('max-black');
-			if(bm.classList.contains('max-percent')){
-				bm.setAttribute('data-title',"Highest percentage & largest black population, "+y);
-			}else{
-				bm.setAttribute('data-title',"Largest black population, "+y);
-			}			
+			if(highlightPercentageMax){
+				let pm = document.querySelector('table div._'+y+'[data-percent="'+percent_max+'"]');
+				pm.classList.add('max-percent');
+				pm.setAttribute('data-title',"Highest percentage, "+y);				
+			}
+
+			if(highlightPopulationMax){
+				let bm = document.querySelector('table div._'+y+'[data-black="'+black_max+'"]');
+				bm.classList.add('max-black');
+				if(bm.classList.contains('max-percent')){
+					bm.setAttribute('data-title',"Highest percentage & largest black population, "+y);
+				}else{
+					bm.setAttribute('data-title',"Largest black population, "+y);
+				}					
+			}
+		
 			
 		});			
+	}
+
+	/*
+	****************
+	Add the controls
+	****************
+	*/
+	if(highlightControls){
+		// totals controls
+		var ui_population_max = document.createElement("input");
+			ui_population_max.setAttribute('type', 'checkbox');
+			ui_population_max.setAttribute('name', 'popmax');
+			ui_population_max.setAttribute('id', 'popmax');
+			ui_population_max.setAttribute('value', 1);
+			if(highlightPopulationMax) ui_population_max.setAttribute('checked', 1);
+				ui_population_max.onchange = function(e){
+					highlightPopulationMax = e.target.checked;
+					doDataTable(data, container, years_covered, summaryLabel, highlightControls, highlightPopulationMax, highlightPercentageMax);
+	
+			}
+			var ui_population_max_label = document.createElement("label");
+				ui_population_max_label.setAttribute('for', 'popmax');
+				ui_population_max_label.innerHTML ='Highlight <span>largest black population</span> per census year';
+			var ui_population_max_container = document.createElement('div');
+				ui_population_max_container.appendChild(ui_population_max);
+				ui_population_max_container.appendChild(ui_population_max_label);
+				
+		// city controls
+		var ui_percentage_max = document.createElement("input");
+			ui_percentage_max.setAttribute('type', 'checkbox');
+			ui_percentage_max.setAttribute('name', 'percentmax');
+			ui_percentage_max.setAttribute('id', 'percentmax');
+			ui_percentage_max.setAttribute('value', 1);
+			if(highlightPercentageMax) ui_percentage_max.setAttribute('checked', 1);
+				ui_percentage_max.onchange = function(e){
+					highlightPercentageMax = e.target.checked;
+					doDataTable(data, container, years_covered, summaryLabel, highlightControls, highlightPopulationMax, highlightPercentageMax);					
+			}
+			var ui_percentage_max_label = document.createElement("label");
+				ui_percentage_max_label.setAttribute('for', 'percentmax');
+				ui_percentage_max_label.innerHTML ='Highlight <span>highest percentage black</span> per census year';	
+			var ui_percentage_max_container = document.createElement('div');
+				ui_percentage_max_container.appendChild(ui_percentage_max);
+				ui_percentage_max_container.appendChild(ui_percentage_max_label);			
+		
+		// container div
+		var toggles = document.createElement('div');
+			toggles.setAttribute('id', 'toggles');
+			toggles.appendChild(ui_percentage_max_container);
+			toggles.appendChild(ui_population_max_container);
+		
+		// output
+		document.querySelector(container).prepend(toggles)	
 	}
 	
 }
