@@ -46,10 +46,9 @@ include '../common/header.php';
 			<a id="data-table-suburbs" class="active" href=""><span class="fa fa-table"></span> Data Table: Suburbs</a>
 			<a id="data-table-county" href=""><span class="fa fa-table"></span> Data Table: City vs. Suburbs</a>
 		</nav>
-
 		<div id="data-visualization-container-2"></div>
 	</div>
-	<figcaption>Fig2: Interactive tabular data for African-American population changes in the city and suburbs of Cleveland, Ohio. Source: based on U.S. decennial census data, 1950 to 2010. Compiled by Mark Souther. <a download class="data-download" href="black_population_suburbs.csv">Download source data as .csv file</a>
+	<figcaption>Fig2: Interactive tabular data for African-American population changes in the city and suburbs of Cleveland, Ohio. Source: based on U.S. decennial census data, 1950 to 2010. Compiled by Mark Souther. <strong>Notes</strong>: Riveredge Township dissolved in 1992. Walton Hills incorporated as a village in 1951 but its census tract maintained the same boundaries as in 1950. The unincorporated remainder of Warrensville Township became the village of Highland Hills in 1991. <a download class="data-download" href="black_population_suburbs.csv">Download source data as .csv file</a>
 	</figcaption>
 	</figure>
 </section>
