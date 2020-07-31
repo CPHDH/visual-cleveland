@@ -39,8 +39,10 @@ function primary_menu(){ ?>
 	<div id="primary-menu" >
 	<ul>
 		<li><a href="/">Home</a></li>
-		<li><a href="/census">Cleveland Population Change, 1800-2010<br><span>Created by CSU Center for Public History + Digital Humanities </span></a></li>
-		<li><a href="/euclid">Euclid Ave. City Directory Data, 1937-1997<br><span>Created by CSU Center for Public History + Digital Humanities </span></a></li>
+		<li><a href="/census">Cleveland Population Change<br><span>Census data: 1800 to 2010 </span></a></li>
+		<li><a href="/black-population-suburbs">Black Suburban Population Change<br><span>Census data: 1950 to 2010 </span></a></li>
+		<li><a href="/euclid">Lower Euclid Ave. Businesses<br><span>City Directory Data: select years, 1937 to 1997 </span></a></li>
+		
 	</ul>
 	<a class="sponsor" title="CSU Center for Public History + Digital Humanities" href="http://csudigitalhumanities.org"><img alt="CSU Center for Public History + Digital Humanities" src="<?php echo $site;?>/images/logo.png"></a>
 	</div>	

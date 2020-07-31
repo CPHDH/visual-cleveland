@@ -5,8 +5,8 @@ $author = '<a href="http://csudigitalhumanities.org">CSU Center for Public Histo
 $header_styles='<link rel="stylesheet" type="text/css" href="black_population_suburbs.css">';
 $cta=null;
 $hero=null;
-$next=null;
-$prev='/euclid';
+$next='/euclid';
+$prev='/census';
 include '../common/header.php'; 
 ?>
 

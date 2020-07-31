@@ -5,7 +5,7 @@ $subtitle=null;
 $cta=null;
 $hero=null;
 $next=null;
-$prev='/census';
+$prev='/black-population-suburbs';
 $header_styles='<link rel="stylesheet" type="text/css" href="euclid.css">';
 include '../common/header.php'; 
 ?>
