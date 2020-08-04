@@ -77,11 +77,46 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		doMapLegendControls(legend_labels, data_by_years, years);
 		// build the map	
 		doMap(data_by_years, years, 0);
+		
+		// do the category charts
+		var category_counts = getCategoryCountsByYear(data,legend_labels,years)
+		console.log(category_counts)
+		
 	});
 		
 });	
 	
 // Functions ==============================================
+function getCategoryCountsByYear(data,legend_labels,years){
+	var json = new Array
+	legend_labels.forEach(label => {
+		var obj = new Object
+		obj.category = label
+		obj.counts = new Array(years.length)
+		json.push(obj)
+	});
+
+	// obj.counts array maps to years index (obj.counts[0] == years[0]) so we can push to that array below
+	data.forEach(row=>{
+		var category_and_sub = row.category ? row.category.split("|") : [condensed_labels_replacement,condensed_labels_replacement];
+		var category = category_and_sub[0].trim();
+		var year = row.year;
+		var i = years.findIndex((y)=> y === year); // matches years[i] in json
+		var c = json.findIndex((j)=>j.category === category)
+		if(json[c]){
+			// update count for category
+			var obj = json[c] // the category object
+			obj.counts[i] = obj.counts[i] ? obj.counts[i] + 1 : 1
+		}else{
+			// update count for OTHER (condensed_labels_replacement)
+			var obj = json[json.length-1] // the "OTHER" category object
+			obj.counts[i] = obj.counts[i] ? obj.counts[i] + 1 : 1
+		}
+	})
+	return json
+}
+
+
 function doMapLegendControls(legend_labels, data_by_years, years){
 	// populate legend
 	d3.select('#legend').append("ul").html(function(){
