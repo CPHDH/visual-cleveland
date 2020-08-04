@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// get a simple array of years to use as keys
 		var years = getYears(data); 			
 		// build the map legend
-		doMapLegendControls(legend_labels, data_by_years, years);
+		doLegendControls(legend_labels, data_by_years, years);
 		// build the map	
 		doMap(data_by_years, years, 0);
 		
@@ -117,7 +117,7 @@ function getCategoryCountsByYear(data,legend_labels,years){
 }
 
 
-function doMapLegendControls(legend_labels, data_by_years, years){
+function doLegendControls(legend_labels, data_by_years, years){
 	// populate legend
 	d3.select('#legend').append("ul").html(function(){
 		var html='';
@@ -126,6 +126,7 @@ function doMapLegendControls(legend_labels, data_by_years, years){
 		})
 		return html;
 	});
+	
 	// populate years
 	d3.select('#legend #y_select').html(function(){
 		var html='';
@@ -136,6 +137,17 @@ function doMapLegendControls(legend_labels, data_by_years, years){
 		})
 		return html;
 	});
+	
+	// populate categories
+	d3.select('#chart-select #c_select').html(function(){
+		var html='<option value="">All Categories</option>';
+		// sort years for display, reference the *initial* array order when switching
+		legend_labels.forEach(function(c,i){
+			html += '<option value="'+c+'">'+c.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())+'</option>';
+		})
+		return html;
+	});	
+		
 	// listen for year selection
 	var s = document.getElementById("y_select");
 	s.addEventListener("change", function(e){
@@ -144,6 +156,13 @@ function doMapLegendControls(legend_labels, data_by_years, years){
 		// re-build map for new year
 		var i = years.indexOf(e.target.value);
 		doMap(data_by_years, years, i);
+	});	
+
+	// listen for category selection
+	var s = document.getElementById("c_select");
+	s.addEventListener("change", function(e){
+		// @TODO!
+		console.log(e.target.value);
 	});	
 }
 
