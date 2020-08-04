@@ -97,6 +97,9 @@ function getCategoryCountsByYear(data,legend_labels,years){
 	});
 
 	// obj.counts array maps to years index (obj.counts[0] == years[0]) so we can push to that array below
+		
+	json.max_values = new Array(years.length); // to use in y-scale when no category is selected
+	current_max_value = 0;
 	data.forEach(row=>{
 		var category_and_sub = row.category ? row.category.split("|") : [condensed_labels_replacement,condensed_labels_replacement];
 		var category = category_and_sub[0].trim();
@@ -107,10 +110,18 @@ function getCategoryCountsByYear(data,legend_labels,years){
 			// update count for category
 			var obj = json[c] // the category object
 			obj.counts[i] = obj.counts[i] ? obj.counts[i] + 1 : 1
+			if(obj.counts[i] > current_max_value){
+				// Update max values for each year
+				json.max_values[i] = obj.counts[i]
+			}
 		}else{
 			// update count for OTHER (condensed_labels_replacement)
 			var obj = json[json.length-1] // the "OTHER" category object
 			obj.counts[i] = obj.counts[i] ? obj.counts[i] + 1 : 1
+			if(obj.counts[i] > current_max_value){
+				// Update max values for each year
+				json.max_values[i] = obj.counts[i]
+			}			
 		}
 	})
 	return json
