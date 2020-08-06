@@ -2,6 +2,7 @@
 
 var csv="euclid.csv";
 var map_container="map-canvas";
+var chart_container="#chart-canvas-inner";
 var default_coords=[41.499685,-81.690637];
 var default_zoom=12;
 var condensed_labels = ["BUILDING DETAIL","UNKNOWN","UNKNOWN OR OTHER","BUILDING AMENITY","PARKING", "UTILITIES"];
@@ -72,34 +73,104 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// get category labels
 		var legend_labels = getCategories(data);
 		// get a simple array of years to use as keys
-		var years = getYears(data); 			
-		// build the map legend
-		doLegendControls(legend_labels, data_by_years, years);
+		var years = getYears(data); 
+		// chart json
+		var chart_json = getCategoryCountsByYear(data, legend_labels, years)
+					
+		// build the ui/legend controls
+		doLegendControls(legend_labels, data_by_years, years, chart_json);
+		
 		// build the map	
 		doMap(data_by_years, years, 0);
 		
 		// do the category charts
-		var category_counts = getCategoryCountsByYear(data,legend_labels,years)
-		console.log(category_counts)
+		doChart(chart_json, null, years);
 		
 	});
 		
 });	
 	
 // Functions ==============================================
+function doChart(chart_json, category, years){
+	
+	console.log("loading data for " + (category ? category : 'ALL CATEGORIES')  + "...")
+	
+	/*
+	****************
+	Prepare the data
+	****************	
+	*/
+		
+	if(category){
+		var filter = chart_json.filter(obj =>{ if(obj.category === category) return obj });
+		var max_count = d3.max(filter[0].counts)
+		var data = [filter[0]]; // array of one category
+	}else{
+		var max_count = d3.max(chart_json.totals)
+		var data = chart_json // array of all categories (account for extra totals obj later)
+	}
+	
+	/*
+	**********************
+	Set up the chart scale
+	**********************	
+	*/
+    	
+	// D3 margin convention  
+	var margin = {top: 20, right: 30, bottom: 20, left: 50},
+	    height = 400 - margin.top - margin.bottom,
+	    width = parseInt(d3.select(chart_container).style('width'), 10),
+	    width = width - margin.left - margin.right
+	
+	// X scale uses the (min/max) years of our data
+	var xScale = d3.scalePoint()
+	    .domain(years) 
+	    .range([10, width-10]);
+	
+	var yScale = d3.scaleLinear()
+	    .domain([0, max_count]) 
+	    .range([height, 0]);  
+	    				
+	// Add the SVG to the container
+	var svg = d3.select(chart_container).append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+		.append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+	// Append the x axis
+	svg.append("g")
+	    .attr("class", "x axis")
+	    .attr("transform", "translate(0," + height + ")")
+	    .call(d3.axisBottom(xScale)
+	    	.tickValues(years)
+	    	.tickFormat(d3.format("Y"))); // no commas; format as years
+	
+	// Append the y axis
+	svg.append("g")
+	    .attr("class", "y axis")
+	    .call(d3.axisLeft(yScale).ticks( Math.min(10, yScale.domain()[1] ))) // no more ticks than there are total (max 10)
+	    
+	/*
+	*****************
+	Add the data bars
+	*****************
+	*/	    
+	
+}
+
+
 function getCategoryCountsByYear(data,legend_labels,years){
 	var json = new Array
 	legend_labels.forEach(label => {
-		var obj = new Object
-		obj.category = label
-		obj.counts = new Array(years.length)
-		json.push(obj)
+		var yobj = new Object
+		yobj.category = label
+		yobj.counts = new Array(years.length)
+		json.push(yobj)
 	});
 
 	// obj.counts array maps to years index (obj.counts[0] == years[0]) so we can push to that array below
-		
-	json.max_values = new Array(years.length); // to use in y-scale when no category is selected
-	current_max_value = 0;
+	json.totals = new Array(years.length)
 	data.forEach(row=>{
 		var category_and_sub = row.category ? row.category.split("|") : [condensed_labels_replacement,condensed_labels_replacement];
 		var category = category_and_sub[0].trim();
@@ -107,28 +178,20 @@ function getCategoryCountsByYear(data,legend_labels,years){
 		var i = years.findIndex((y)=> y === year); // matches years[i] in json
 		var c = json.findIndex((j)=>j.category === category)
 		if(json[c]){
-			// update count for category
 			var obj = json[c] // the category object
-			obj.counts[i] = obj.counts[i] ? obj.counts[i] + 1 : 1
-			if(obj.counts[i] > current_max_value){
-				// Update max values for each year
-				json.max_values[i] = obj.counts[i]
-			}
 		}else{
-			// update count for OTHER (condensed_labels_replacement)
-			var obj = json[json.length-1] // the "OTHER" category object
-			obj.counts[i] = obj.counts[i] ? obj.counts[i] + 1 : 1
-			if(obj.counts[i] > current_max_value){
-				// Update max values for each year
-				json.max_values[i] = obj.counts[i]
-			}			
+			var obj = json[json.length-1] // the "OTHER" category object (condensed)		
 		}
+		// update count for the category
+		obj.counts[i] = obj.counts[i] ? obj.counts[i] + 1 : 1 ;
+		// update "All Categories" totals for each year (use in default y-scale)
+		json.totals[i] = json.totals[i] ? json.totals[i] + 1 : 1;	
 	})
 	return json
 }
 
 
-function doLegendControls(legend_labels, data_by_years, years){
+function doLegendControls(legend_labels, data_by_years, years, chart_json){
 	// populate legend
 	d3.select('#legend').append("ul").html(function(){
 		var html='';
@@ -173,7 +236,10 @@ function doLegendControls(legend_labels, data_by_years, years){
 	var s = document.getElementById("c_select");
 	s.addEventListener("change", function(e){
 		// @TODO!
-		console.log(e.target.value);
+		var chart = document.querySelector(chart_container);
+		chart.innerHTML = '';
+		var category = e.target.value ? e.target.value : null
+		doChart(chart_json, category, years)
 	});	
 }
 

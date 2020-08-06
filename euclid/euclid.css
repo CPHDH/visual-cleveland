@@ -31,11 +31,12 @@ figcaption a{
 }
 
 #chart-canvas {
-	height: 400px;
+	height: 500px;
     background: #e0e0e0;
     max-width: 44em;
     margin: 0 auto;
 }
+
 figcaption.chart{
     max-width: 55em;
     margin: 0.5em auto;	
