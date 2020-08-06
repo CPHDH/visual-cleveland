@@ -123,9 +123,10 @@ function doChart(chart_json, category, years){
 	    width = width - margin.left - margin.right
 	
 	// X scale uses the (min/max) years of our data
-	var xScale = d3.scalePoint()
+	var xScale = d3.scaleBand()
 	    .domain(years) 
-	    .range([10, width-10]);
+	    .range([10, width-10])
+	    .padding(.2)
 	
 	var yScale = d3.scaleLinear()
 	    .domain([0, max_count]) 
@@ -155,7 +156,33 @@ function doChart(chart_json, category, years){
 	*****************
 	Add the data bars
 	*****************
-	*/	    
+	*/
+	data.forEach((d)=>{
+		var name = d.category;
+		// console.log(name)
+		var counts = d.counts;
+		counts.forEach((count,i) =>{
+			var total = count;
+			var year = years[i]
+			//console.log(year,total)
+			
+			svg.selectAll("mybar")
+			  .data(data) // ?
+			  .enter()
+			  .append("rect")
+			    .attr("x", xScale(year) )
+			    .attr("y", yScale(total) )
+			    .attr("category", name)
+			    .attr("year", year)
+			    .attr("total", total)
+			    .attr("width", xScale.bandwidth())
+			    .attr("height", height - yScale(total))
+			    .attr("fill", getMarkerColor(name) )		  
+		})
+	})
+	
+	
+
 	
 }
 
