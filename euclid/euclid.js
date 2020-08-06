@@ -282,7 +282,7 @@ function doMap(data_by_years, years, year_index){
 }
 
 function colorRange(i){
-	var c = d3.scale.linear()
+	var c = d3.scaleLinear()
 	.domain([0, 2, 4, 6, 8, 10, 12, 14])
 	.range(['#f24a4a', '#f29b4a', '#f0c724', '#4dbb3a','#4b66d2', '#b96cda']);	
 	return c(i);	

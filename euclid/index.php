@@ -51,6 +51,5 @@ crossorigin=""></script>
 <!-- Leaflet Marker Cluster -->
 <script src='https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js'></script>
 <!-- D3 -->
-<script src="//d3js.org/d3.v3.min.js"></script>
-<script src="<?php echo $site;?>/javascripts/d3tip.js"></script>
+<script src="//d3js.org/d3.v4.min.js"></script>
 <script src="euclid.js"></script>
