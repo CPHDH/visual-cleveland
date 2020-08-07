@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	
 // Functions ==============================================
 function doChart(chart_json, category, years){
-	
 	console.log("loading data for " + (category ? category : 'ALL CATEGORIES')  + "...")
 	
 	/*
@@ -107,7 +106,7 @@ function doChart(chart_json, category, years){
 		var data = [filter[0]]; // array of one category
 	}else{
 		var max_count = d3.max(chart_json.totals)
-		var data = chart_json // array of all categories (account for extra totals obj later)
+		var data = chart_json // array of all categories 
 	}
 	
 	/*
@@ -122,12 +121,13 @@ function doChart(chart_json, category, years){
 	    width = parseInt(d3.select(chart_container).style('width'), 10),
 	    width = width - margin.left - margin.right
 	
-	// X scale uses the (min/max) years of our data
+	// X scale uses years
 	var xScale = d3.scaleBand()
 	    .domain(years) 
 	    .range([10, width-10])
 	    .padding(.2)
 	
+	// Y scale uses category counts
 	var yScale = d3.scaleLinear()
 	    .domain([0, max_count]) 
 	    .range([height, 0]);  
@@ -157,6 +157,8 @@ function doChart(chart_json, category, years){
 	Add the data bars
 	*****************
 	*/
+
+	var bars = svg.append("g").attr("id","bars")
 	data.forEach((d)=>{
 		var name = d.category;
 		// console.log(name)
@@ -164,10 +166,10 @@ function doChart(chart_json, category, years){
 		counts.forEach((count,i) =>{
 			var total = count;
 			var year = years[i]
-			//console.log(year,total)
+			var one = new Array(1) // we already looped the data so this keeps from repeating ¯\_(ツ)_/¯
 			
-			svg.selectAll("mybar")
-			  .data(data) // ?
+			bars.selectAll("bar")
+			  .data(one) 
 			  .enter()
 			  .append("rect")
 			    .attr("x", xScale(year) )
@@ -175,14 +177,13 @@ function doChart(chart_json, category, years){
 			    .attr("category", name)
 			    .attr("year", year)
 			    .attr("total", total)
+			    .attr("class", "col_"+year)
 			    .attr("width", xScale.bandwidth())
 			    .attr("height", height - yScale(total))
 			    .attr("fill", getMarkerColor(name) )		  
 		})
+		
 	})
-	
-	
-
 	
 }
 
