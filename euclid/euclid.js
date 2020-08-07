@@ -168,19 +168,20 @@ function doChart(chart_json, category, years){
 		  .append("rect")
 		    .attr("x", xScale(year) )
 		    .attr("y", (d) => {
-			    return yScale(d.counts[year_index]) 
+			    return d.counts[year_index] ? yScale(d.counts[year_index]) : 0
 			   })
 		    .attr("category", (d) =>{
 			    return d.category
 		    })
 		    .attr("year", year)
 		    .attr("total", (d) => {
-			    return yScale(d.counts[year_index]) 
+			    return d.counts[year_index] ? d.counts[year_index] : 0
 			   })
 		    .attr("class", "rect_"+year)
 		    .attr("width", xScale.bandwidth())
 		    .attr("height", (d) =>{
-			    return height - yScale(d.counts[year_index])
+			    console.log(d.counts[year_index],d.category)
+			    return d.counts[year_index] ? height - yScale(d.counts[year_index]) : 0
 		    })
 		    .attr("fill", (d) =>{
 			    return getMarkerColor(d.category)
