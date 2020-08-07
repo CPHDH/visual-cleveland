@@ -159,31 +159,35 @@ function doChart(chart_json, category, years){
 	*/
 
 	var bars = svg.append("g").attr("id","bars")
-	data.forEach((d)=>{
-		var name = d.category;
-		// console.log(name)
-		var counts = d.counts;
-		counts.forEach((count,i) =>{
-			var total = count;
-			var year = years[i]
-			var one = new Array(1) // we already looped the data so this keeps from repeating ¯\_(ツ)_/¯
-			
-			bars.selectAll("bar")
-			  .data(one) 
-			  .enter()
-			  .append("rect")
-			    .attr("x", xScale(year) )
-			    .attr("y", yScale(total) )
-			    .attr("category", name)
-			    .attr("year", year)
-			    .attr("total", total)
-			    .attr("class", "col_"+year)
-			    .attr("width", xScale.bandwidth())
-			    .attr("height", height - yScale(total))
-			    .attr("fill", getMarkerColor(name) )		  
-		})
-		
+	years.forEach((year,i)=>{
+		var bar = bars.append("g").attr("id","bars_"+year)
+		var year_index = i;
+		bar.selectAll("bar")
+		  .data(data) 
+		  .enter()
+		  .append("rect")
+		    .attr("x", xScale(year) )
+		    .attr("y", (d) => {
+			    return yScale(d.counts[year_index]) 
+			   })
+		    .attr("category", (d) =>{
+			    return d.category
+		    })
+		    .attr("year", year)
+		    .attr("total", (d) => {
+			    return yScale(d.counts[year_index]) 
+			   })
+		    .attr("class", "rect_"+year)
+		    .attr("width", xScale.bandwidth())
+		    .attr("height", (d) =>{
+			    return height - yScale(d.counts[year_index])
+		    })
+		    .attr("fill", (d) =>{
+			    return getMarkerColor(d.category)
+		    })		  
+
 	})
+
 	
 }
 
