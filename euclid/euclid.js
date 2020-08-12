@@ -162,34 +162,37 @@ function doChart(chart_json, category, years){
 	years.forEach((year,i)=>{
 		var bar = bars.append("g").attr("id","bars_"+year)
 		var year_index = i;
+		var y0 = 0; // stacking
 		bar.selectAll("bar")
-		  .data(data) 
-		  .enter()
-		  .append("rect")
-		    .attr("x", xScale(year) )
-		    .attr("y", (d) => {
-			    return d.counts[year_index] ? yScale(d.counts[year_index]) : 0
+			.data(data) 
+			.enter()
+			.append("rect")
+			.attr("x", xScale(year) )
+			.attr("y", (d) => {
+			    var count = d.counts[year_index] ? d.counts[year_index] : 0
+			    y0 += count // stacking
+			    return yScale(y0)
 			   })
-		    .attr("category", (d) =>{
+			.attr("category", (d) =>{
 			    return d.category
-		    })
-		    .attr("year", year)
-		    .attr("total", (d) => {
+			})
+			.attr("year", year)
+			.attr("total", (d) => {
 			    return d.counts[year_index] ? d.counts[year_index] : 0
 			   })
-		    .attr("class", "rect_"+year)
-		    .attr("width", xScale.bandwidth())
-		    .attr("height", (d) =>{
-			    console.log(d.counts[year_index],d.category)
-			    return d.counts[year_index] ? height - yScale(d.counts[year_index]) : 0
-		    })
-		    .attr("fill", (d) =>{
+			.attr("class", "rect_"+year)
+			.attr("width", xScale.bandwidth())
+			.attr("height", (d) =>{
+			    var count = d.counts[year_index] ? d.counts[year_index] : 0
+			    var bar_height = count ? (height - yScale(count)) : 0
+			    return bar_height
+			})
+			.attr("fill", (d) =>{
 			    return getMarkerColor(d.category)
-		    })		  
+			})		  
 
 	})
-
-	
+		
 }
 
 
