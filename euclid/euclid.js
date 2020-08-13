@@ -205,14 +205,20 @@ function doChart(chart_json, category, years){
 			var c_total = $(this).data('total')
 			var y_total = 0;
 			var siblings = $('rect.'+this.className.baseVal);
+			var isMulti = siblings.length > 1 ? true : false;
 			siblings.each((i)=>{
 				y_total += $(siblings[i]).data("total")
 			})
 			var percent = Number.parseFloat((c_total/y_total)*100).toPrecision(3)
 			
-			var tip_content = '<strong>'+$(this).data("category").toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) + '</strong> '
-				+ '<div class="tip_details">'+percent+' %<br>'+
-				+ c_total+' of '+y_total+'</div>'
+			var tip_content = '<strong>'+$(this).data("category").toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) + '</strong>'
+			
+			if(isMulti){
+				tip_content += '<div class="tip_details">'+percent+' %<br>'
+				tip_content += c_total+' of '+y_total+'</div>'				
+			}else{
+				tip_content += '<span class="tip_details">: '+c_total+'</span>'					
+			}
 			
 		    return tip_content
 		},
