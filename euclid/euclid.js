@@ -173,11 +173,11 @@ function doChart(chart_json, category, years){
 			    y0 += count // stacking
 			    return yScale(y0)
 			   })
-			.attr("category", (d) =>{
+			.attr("data-category", (d) =>{
 			    return d.category
 			})
-			.attr("year", year)
-			.attr("total", (d) => {
+			.attr("data-year", year)
+			.attr("data-total", (d) => {
 			    return d.counts[year_index] ? d.counts[year_index] : 0
 			   })
 			.attr("class", "rect_"+year)
@@ -192,6 +192,32 @@ function doChart(chart_json, category, years){
 			})		  
 
 	})
+	
+	/*
+	***************
+	Add the Tooltip
+	***************	
+	*/
+	// @TODO!: update jQuery, jQueryUI, etc
+	$( "rect" ).tooltip({
+		items: 'rect',
+		content: function () {
+			var c_total = $(this).data('total')
+			var y_total = 0;
+			var siblings = $('rect.'+this.className.baseVal);
+			siblings.each((i)=>{
+				y_total += $(siblings[i]).data("total")
+			})
+			var percent = Number.parseFloat((c_total/y_total)*100).toPrecision(3)
+			
+			var tip_content = '<strong>'+$(this).data("category").toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) + '</strong> '
+				+ '<div class="tip_details">'+percent+' %<br>'+
+				+ c_total+' of '+y_total+'</div>'
+			
+		    return tip_content
+		},
+		track: true     
+	});
 		
 }
 

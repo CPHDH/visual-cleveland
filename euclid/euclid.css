@@ -55,6 +55,15 @@ figcaption.chart{
 	margin-left: 1em;
 }
 
+/* Tooltip */
+.ui-tooltip {
+    font-size:.9em;
+    font-family: "Open Sans",sans-serif;
+}
+.ui-tooltip .tip_details{
+	font-size:0.9em;
+	color:#666
+}
 
 /* Marker Clusters */
 .marker-cluster-large {
