@@ -42,6 +42,29 @@ include '../common/header.php';
 			</div>
 		</figure>	
 	</section>
+	
+	<section>
+		<figure>
+			<div id="browse-canvas">
+				<div id="browse-options">
+					<input id="filter_browse" placeholder="Type to filter...">
+					<div id="select_browse">
+						<select id="y_select_browse" title="Select a Year"></select>
+						<select id="c_select_browse" title="Select a Category"></select>
+					</div>
+				</div>
+				<div id="browse-canvas-inner"></div>
+			</div>
+			<figcaption class="browse">Fig3: Historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street) by category. Source: Cleveland City Directories, select years from 1937 to 1997. <em><strong>NOTE:</strong> 2019 data was manually compiled by Mark Souther and is not part of any city directory.</em> <a download class="data-download" href="euclid.csv">Download source data as .csv file</a>
+		</figure>
+	</section>
+	<section>
+		<figure>
+			<div id="table-canvas">
+			</div>
+		</figure>	
+	</section>	
+	
 </section>
 
 <?php

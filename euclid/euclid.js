@@ -3,6 +3,7 @@
 var csv="euclid.csv";
 var map_container="map-canvas";
 var chart_container="#chart-canvas-inner";
+var browse_container="#browse-canvas-inner";
 var default_coords=[41.499685,-81.690637];
 var default_zoom=12;
 var condensed_labels = ["BUILDING DETAIL","UNKNOWN","UNKNOWN OR OTHER","BUILDING AMENITY","PARKING", "UTILITIES"];
@@ -59,7 +60,17 @@ d3.selection.prototype.moveToBack = function() {
             this.parentNode.insertBefore(this, firstChild); 
         } 
     });
-};	
+};
+	
+// jQuery Extensions ======================================
+
+$.extend($.expr[':'], {
+  'containsi': function(elem, i, match, array)
+  {
+    return (elem.textContent || elem.innerText || '').toLowerCase()
+    .indexOf((match[3] || "").toLowerCase()) >= 0;
+  }
+});
 
 // Implementation =========================================
 
@@ -85,12 +96,36 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		
 		// do the category charts
 		doChart(chart_json, null, years);
+
+		// do the data cards
+		doCards(data);		
 		
 	});
 		
 });	
 	
 // Functions ==============================================
+function doCards(data){
+	var html = ''
+	data.forEach((d)=>{
+		var title = d.occupant_name ? '<h1>'+d.occupant_name.trim()+'</h1>' : '<h1>Occupant Not Recorded</h1>';
+		var address = d.location ? '<div class="address">'+d.location.trim()+'</div>' : '';
+		var building = d.building_name ? '<div class="building">'+d.building_name.trim()+'</div>' : '';
+		var year = d.year ? '<div class="year"><span>Year:</span> '+d.year.trim()+'</div>' : '';
+		var type = d.occupant_type ? '<div class="type"><span>Type:</span> '+d.occupant_type.trim()+'</div>' : '';
+		var category_and_sub = d.category ? d.category.split("|") : [condensed_labels_replacement,condensed_labels_replacement];
+		var category = category_and_sub[0] ? '<div class="category"><span>Category:</span> '+category_and_sub[0].trim()+'</div>' : '';
+		var subcategory = category_and_sub[1] ? '<div class="subcategory"><span>Subcategory:</span> '+category_and_sub[1].trim()+'</div>' : '';
+		var note = d.notes ? '<div class="notes"><span>Notes:</span> '+d.notes.trim()+'</div>' : '';
+		var color = category_and_sub[0] ? getMarkerColor(category_and_sub[0].trim()) : "#000000";
+		var color_cat = category_and_sub[0] ? '<div class="category_header"><div class="color" style="background-color:'+color+'"></div><div class="label">'+(color !== "#000000" ? category_and_sub[0].trim() : "OTHER")+'</div></div>' : '';
+		var card_text = '<div class="card-header">'+color_cat+title+building+address+'</div>'+'<div class="card-metadata">'+year+type+category+subcategory+note+'</div>';
+		html += '<div class="card" data-category="'+(color !== "#000000" ? category_and_sub[0].trim() : "OTHER")+'" data-year="'+(d.year ? d.year.trim() : '')+'">'+card_text+'</div>';
+	})
+	
+	return $(browse_container).html(html)
+}
+
 function doChart(chart_json, category, years){
 	console.log("loading data for " + (category ? category : 'ALL CATEGORIES')  + "...")
 	
@@ -227,7 +262,6 @@ function doChart(chart_json, category, years){
 		
 }
 
-
 function getCategoryCountsByYear(data,legend_labels,years){
 	var json = new Array
 	legend_labels.forEach(label => {
@@ -279,6 +313,15 @@ function doLegendControls(legend_labels, data_by_years, years, chart_json){
 		})
 		return html;
 	});
+	d3.select('#select_browse #y_select_browse').html(function(){
+		var html='<option value="">All Years</option>';
+		// sort years for display, reference the *initial* array order when switching
+		var sorted = years.sort();
+		sorted.forEach(function(y,i){
+			html += '<option value="'+y+'">'+y+'</option>';
+		})
+		return html;
+	});
 	
 	// populate categories
 	d3.select('#chart-select #c_select').html(function(){
@@ -289,6 +332,14 @@ function doLegendControls(legend_labels, data_by_years, years, chart_json){
 		})
 		return html;
 	});	
+	d3.select('#select_browse #c_select_browse').html(function(){
+		var html='<option value="">All Categories</option>';
+		// sort years for display, reference the *initial* array order when switching
+		legend_labels.forEach(function(c,i){
+			html += '<option value="'+c+'">'+c.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())+'</option>';
+		})
+		return html;
+	});		
 		
 	// listen for year selection
 	var s = document.getElementById("y_select");
@@ -303,12 +354,54 @@ function doLegendControls(legend_labels, data_by_years, years, chart_json){
 	// listen for category selection
 	var s = document.getElementById("c_select");
 	s.addEventListener("change", function(e){
-		// @TODO!
 		var chart = document.querySelector(chart_container);
 		chart.innerHTML = '';
 		var category = e.target.value ? e.target.value : null
 		doChart(chart_json, category, years)
+	});
+	
+	// listen for filter selections
+	var c_filter = '';
+	var y_filter = '';
+	var t_filter = '';
+	var s = document.getElementById("y_select_browse");
+	s.addEventListener("change", function(e){
+		y_filter = e.target.value ? e.target.value : '';
+		filterDataCards(c_filter,y_filter,t_filter)
 	});	
+	var s = document.getElementById("c_select_browse");
+	s.addEventListener("change", function(e){
+		c_filter = e.target.value ? e.target.value : '';
+		filterDataCards(c_filter,y_filter,t_filter)
+	});	
+	
+	var filterDataCards = function(c,y,t){
+		$(browse_container + ' .card' ).show();
+		if(c.length) $( browse_container + ' .card[data-category != "'+c+'"]' ).hide()
+		if(y.length) $( browse_container + ' .card[data-year != "'+y+'"]' ).hide()
+		if(t.length) $( browse_container + ' .card' ).not(':containsi("'+t+'")').hide()
+	}
+	
+	// listen for keyword query
+	var timeout;
+	var delay = 500;
+	var input = $("#filter_browse")
+	var callback = function(){
+		// @TODO!
+		var keyword = input.val()
+		if(keyword.length > 1){
+			t_filter = keyword;
+			filterDataCards(c_filter,y_filter,t_filter)
+		}else{
+			t_filter = '';
+			filterDataCards(c_filter,y_filter,t_filter)			
+		}
+	} 
+	input.keyup(function(e) {
+		if(timeout) clearTimeout(timeout);
+		timeout = setTimeout(function(e){ callback() }, delay);
+  	});
+	
 }
 
 function doMap(data_by_years, years, year_index){

@@ -37,7 +37,88 @@ figcaption a{
     margin: 0 auto;
 }
 
-figcaption.chart{
+#browse-canvas {
+  min-height: 50vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: #eaeaea;
+}
+
+#browse-canvas-inner{
+	padding: 20px;
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+}
+
+#browse-canvas-inner .card{
+	box-sizing: border-box;
+	padding: 0 10px 10px;
+	margin: 10px;
+	width: calc( 33.3% - 20px);
+	background: #fff;
+	box-shadow: 0 0 10px rgba(0,0,0,.5);
+	font-size: .9em;
+}
+
+.card .category_header{
+	display: flex;
+	align-items: flex-end;
+	flex-direction: row;
+	font-size: .8em;
+	border-bottom: 1px solid #ccc;
+	padding: 6px 0;
+}
+
+@media all and (max-width:800px){
+	#browse-canvas-inner .card{
+		width: calc( 50% - 20px);
+	}
+}
+
+@media all and (max-width:550px){
+	#browse-canvas-inner .card{
+		width: 100%;
+	}	
+}
+
+#browse-options{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 1em;
+	margin: 0 auto;
+}
+
+#browse-options input{
+	width: 100%;
+	flex-grow: 1;
+	padding:10px;
+	margin: 0 10px;
+}
+#select_browse{
+	margin: 0 10px 0 0;
+}
+#browse-options select{
+	margin: 0 5px;
+}
+
+@media all and (max-width:550px){
+	#browse-options{
+		flex-wrap: wrap;
+	}
+	#select_browse{
+		width: calc(100% - 20px);
+	}
+	#browse-options select{
+		margin: 0 10px;
+		width: 100%;
+	}	
+}
+
+
+figcaption.chart, figcaption.browse{
     max-width: 55em;
     margin: 0.5em auto;	
 }
@@ -172,7 +253,8 @@ figcaption.chart{
 #legend li:last-child{
 	margin-bottom: 0;
 }
-#legend li .color{
+#legend li .color,
+.category_header .color{
 	flex-grow: 0;
 	flex-shrink: 0;
 	margin-top: 2px;
