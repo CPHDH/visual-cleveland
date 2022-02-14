@@ -39,7 +39,7 @@ function primary_menu(){ ?>
 	<div id="primary-menu" >
 	<ul>
 		<li><a href="/">Home</a></li>
-		<li><a href="/census">Cleveland Population Change<br><span>Census data: 1800 to 2010 </span></a></li>
+		<li><a href="/census">Cleveland Population Change<br><span>Census data: 1800 to 2020 </span></a></li>
 		<li><a href="/black-population-suburbs">Black Suburban Population Change<br><span>Census data: 1950 to 2010 </span></a></li>
 		<li><a href="/euclid">Lower Euclid Ave. Businesses<br><span>City Directory Data: select years, 1937 to 1997 </span></a></li>
 		
