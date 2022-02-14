@@ -1,6 +1,6 @@
 <?php 
 $title='Decennial Census Data';
-$subtitle='Cleveland Population Change, 1800-2010';
+$subtitle='Cleveland Population Change, 1800-2020';
 $author = '<a href="http://csudigitalhumanities.org">CSU Center for Public History + Digital Humanities</a>';
 $header_styles='<link rel="stylesheet" type="text/css" href="census.css">';
 $cta=null;
@@ -24,7 +24,7 @@ include '../common/header.php';
 		</nav>
 		<div id="data-visualization-container"></div>
 	</div>
-	<figcaption>Fig1: Interactive data visualization of historical population change in Cleveland, Ohio. Source: based on U.S. decennial census data, 1800 to 2010. <a download class="data-download" href="data.csv">Download source data as .csv file</a>
+	<figcaption>Fig1: Interactive data visualization of historical population change in Cleveland, Ohio. Source: based on U.S. decennial census data, 1800 to 2020. <a download class="data-download" href="data.csv">Download source data as .csv file</a>
 	</figcaption>
 	</figure>
 	<section class="explanation">
