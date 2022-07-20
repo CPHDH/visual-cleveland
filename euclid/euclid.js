@@ -524,7 +524,7 @@ function doMap(data_by_years, years, year_index) {
       attribution:
         '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://cartodb.com/attributions">CartoDB</a>',
       retina: L.Browser.retina ? "@2x" : "",
-      maxZoom: 21,
+      maxZoom: 18,
       maxNativeZoom: 18,
     }
   ).addTo(map);
