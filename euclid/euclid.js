@@ -4,6 +4,7 @@ var csv = "euclid.csv";
 var map_container = "map-canvas";
 var chart_container = "#chart-canvas-inner";
 var browse_container = "#browse-canvas-inner";
+var map = null;
 var default_coords = [41.499685, -81.690637];
 var default_zoom = 12;
 var condensed_labels = [
@@ -97,7 +98,6 @@ $.extend($.expr[":"], {
 // Implementation =========================================
 
 document.addEventListener("DOMContentLoaded", function (event) {
-  const map = null;
   d3.csv(csv, function (data) {
     // first, sort by category, so that clusters spider nice
     var sorted_by_category = data.sort(function (a, b) {
@@ -201,10 +201,6 @@ function doCards(data) {
 }
 
 function doChart(chart_json, category, years) {
-  console.log(
-    "loading data for " + (category ? category : "ALL CATEGORIES") + "..."
-  );
-
   /*
 	****************
 	Prepare the data
@@ -524,7 +520,7 @@ function doMap(data_by_years, years, year_index) {
       attribution:
         '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://cartodb.com/attributions">CartoDB</a>',
       retina: L.Browser.retina ? "@2x" : "",
-      maxZoom: 18,
+      maxZoom: 20,
       maxNativeZoom: 18,
     }
   ).addTo(map);
@@ -544,7 +540,6 @@ function doMap(data_by_years, years, year_index) {
   });
 
   // add markers
-  console.log("loading data for " + years[year_index] + "...");
   data_by_years[year_index].forEach(function (row, i) {
     // coords
     var lon = row.Longitude;

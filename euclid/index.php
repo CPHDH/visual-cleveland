@@ -36,12 +36,6 @@ include '../common/header.php';
 			<figcaption class="chart">Fig2: Interactive chart displaying historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street) by category. Source: Cleveland City Directories, select years from 1937 to 1997. <em><strong>NOTE:</strong> 1967 data is incomplete and currently limited to addresses lower than E. 9th Street (update pending); 2019 data was manually compiled by Mark Souther and is not part of any city directory.</em> <a download class="data-download" href="euclid.csv">Download source data as .csv file</a>
 		</figure>
 	</section>
-	<section>
-		<figure>
-			<div id="table-canvas">
-			</div>
-		</figure>	
-	</section>
 	
 	<section>
 		<figure>
