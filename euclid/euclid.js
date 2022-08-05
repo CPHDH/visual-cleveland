@@ -4,6 +4,7 @@ var csv = "euclid.csv";
 var map_container = "map-canvas";
 var chart_container = "#chart-canvas-inner";
 var browse_container = "#browse-canvas-inner";
+var dispatch = true;
 var map = null;
 var default_coords = [41.499685, -81.690637];
 var default_zoom = 12;
@@ -112,24 +113,31 @@ document.addEventListener("DOMContentLoaded", function (event) {
     // chart json
     var chart_json = getCategoryCountsByYear(data, legend_labels, years);
 
-    // build the ui/legend controls
-    doLegendControls(legend_labels, data_by_years, years, chart_json);
-
-    // build the map
-    doMap(data_by_years, years, 0);
-
-    // do the category charts
-    doChart(chart_json, null, years);
-
-    // do the data cards
-    doCards(data);
+    const init = (data, legend_labels, data_by_years, years, chart_json) => {
+      document.addEventListener("initialMapLoad", () => {
+        // build the ui/legend controls
+        doLegendControls(legend_labels, data_by_years, years, chart_json);
+        // do the category charts
+        doChart(chart_json, null, years);
+      });
+      document.addEventListener("initialChartLoad", () => {
+        // do the data cards
+        setTimeout(() => {
+          doCards(data);
+        }, 500);
+      });
+      // build the map to begin loading
+      doMap(data_by_years, years, 0);
+    };
+    init(data, legend_labels, data_by_years, years, chart_json);
   });
 });
 
 // Functions ==============================================
 function doCards(data) {
-  var html = "";
+  $(browse_container).hide();
   data.forEach((d) => {
+    var html = "";
     var title = d.occupant_name
       ? "<h1>" + d.occupant_name.trim() + "</h1>"
       : "<h1>Occupant Not Recorded</h1>";
@@ -195,9 +203,12 @@ function doCards(data) {
       '">' +
       card_text +
       "</div>";
-  });
 
-  return $(browse_container).html(html);
+    $(browse_container).append(html);
+  });
+  $(browse_container).fadeIn(1000, "swing", () => {
+    console.log("complete");
+  });
 }
 
 function doChart(chart_json, category, years) {
@@ -340,6 +351,9 @@ function doChart(chart_json, category, years) {
     },
     track: true,
   });
+  const chartEvent = new Event("initialChartLoad");
+  if (dispatch) document.dispatchEvent(chartEvent);
+  dispatch = false;
 }
 
 function getCategoryCountsByYear(data, legend_labels, years) {
@@ -524,6 +538,11 @@ function doMap(data_by_years, years, year_index) {
       maxNativeZoom: 18,
     }
   ).addTo(map);
+
+  map.once("layeradd ", () => {
+    const mapEvent = new Event("initialMapLoad");
+    document.dispatchEvent(mapEvent);
+  });
 
   // cluster group
   var group = [];
