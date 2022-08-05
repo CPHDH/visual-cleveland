@@ -4,7 +4,8 @@ var csv = "euclid.csv";
 var map_container = "map-canvas";
 var chart_container = "#chart-canvas-inner";
 var browse_container = "#browse-canvas-inner";
-var dispatch = true;
+var dispatchChart = true;
+var dispatchMap = true;
 var map = null;
 var default_coords = [41.499685, -81.690637];
 var default_zoom = 12;
@@ -352,8 +353,10 @@ function doChart(chart_json, category, years) {
     track: true,
   });
   const chartEvent = new Event("initialChartLoad");
-  if (dispatch) document.dispatchEvent(chartEvent);
-  dispatch = false;
+  if (dispatchChart) {
+    document.dispatchEvent(chartEvent);
+    dispatchChart = false;
+  }
 }
 
 function getCategoryCountsByYear(data, legend_labels, years) {
@@ -540,8 +543,11 @@ function doMap(data_by_years, years, year_index) {
   ).addTo(map);
 
   map.once("layeradd ", () => {
-    const mapEvent = new Event("initialMapLoad");
-    document.dispatchEvent(mapEvent);
+    if (dispatchMap) {
+      const mapEvent = new Event("initialMapLoad");
+      document.dispatchEvent(mapEvent);
+      dispatchMap = false;
+    }
   });
 
   // cluster group
