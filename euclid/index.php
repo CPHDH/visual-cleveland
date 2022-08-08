@@ -16,7 +16,7 @@ include '../common/header.php';
 	<div class="section-title"><h2><?php echo $title;?></h2> <span class="byline">by <strong><?php echo $author;?></strong></span></div>
 	<figure>
 		<div id="map-canvas">
-			<div id="legend"><h1>Year</h1><select id="y_select"></select><h1>Legend</h1></div>
+			<div id="legend"><h1>Year</h1><select id="y_select"></select><h1>Categories</h1></div>
 			<div id="toast"><div id="toast-inner"></div></div>		
 		</div>
 		<figcaption>Fig1: Interactive map displaying historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street) by location. Source: Cleveland City Directories, select years from 1937 to 1997. <em><strong>NOTE:</strong> 2019 data was manually compiled by Mark Souther and is not part of any city directory.</em> <a download class="data-download" href="euclid.csv">Download source data as .csv file</a>
@@ -33,13 +33,15 @@ include '../common/header.php';
 				<div id="chart-select"><h1>Category</h1><select id="c_select"></select></div>
 				<div id="chart-canvas-inner"></div>
 			</div>
-			<figcaption class="chart">Fig2: Interactive chart displaying historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street) by category. Source: Cleveland City Directories, select years from 1937 to 1997. <em><strong>NOTE:</strong> 1967 data is incomplete and currently limited to addresses lower than E. 9th Street (update pending); 2019 data was manually compiled by Mark Souther and is not part of any city directory.</em> <a download class="data-download" href="euclid.csv">Download source data as .csv file</a>
+			<figcaption class="chart">Fig2: Interactive chart displaying historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street) by category. Source: Cleveland City Directories, select years from 1937 to 1997. <em><strong>NOTE:</strong> 2019 data was manually compiled by Mark Souther and is not part of any city directory.</em> <a download class="data-download" href="euclid.csv">Download source data as .csv file</a>
 		</figure>
 	</section>
 	
 	<section>
 		<figure>
 			<div id="browse-canvas">
+				<h1>Data Viewer</h1>
+				<p>Select a year or category, or enter some text to view matching records.</p>
 				<div id="browse-options">
 					<input id="filter_browse" placeholder="Type to filter...">
 					<div id="select_browse">
@@ -49,7 +51,7 @@ include '../common/header.php';
 				</div>
 				<div id="browse-canvas-inner"></div>
 			</div>
-			<figcaption class="browse">Fig3: Historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street) by category. Source: Cleveland City Directories, select years from 1937 to 1997. <em><strong>NOTE:</strong> 2019 data was manually compiled by Mark Souther and is not part of any city directory.</em> <a download class="data-download" href="euclid.csv">Download source data as .csv file</a>
+			<figcaption class="browse">Fig3: Interactive widget for browsing historical city directory data for lower Euclid Avenue in Cleveland, Ohio (Public Square to East 9th Street) by category. Source: Cleveland City Directories, select years from 1937 to 1997. <em><strong>NOTE:</strong> 2019 data was manually compiled by Mark Souther and is not part of any city directory.</em> <a download class="data-download" href="euclid.csv">Download source data as .csv file</a>
 		</figure>
 	</section>
 	<section>
