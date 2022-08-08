@@ -6,6 +6,9 @@ var chart_container = "#chart-canvas-inner";
 var browse_container = "#browse-canvas-inner";
 var dispatchChart = true;
 var dispatchMap = true;
+var zoomToBounds = true;
+var currentFilter = false;
+var currentYearIndex = 0;
 var map = null;
 var default_coords = [41.499685, -81.690637];
 var default_zoom = 12;
@@ -128,7 +131,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }, 500);
       });
       // build the map to begin loading
-      doMap(data_by_years, years, 0);
+      doMap(
+        data_by_years,
+        years,
+        currentYearIndex,
+        default_coords,
+        default_zoom
+      );
     };
     init(data, legend_labels, data_by_years, years, chart_json);
   });
@@ -207,9 +216,7 @@ function doCards(data) {
 
     $(browse_container).append(html);
   });
-  $(browse_container).fadeIn(1000, "swing", () => {
-    console.log("complete");
-  });
+  // $(browse_container).fadeIn(1000, "swing");
 }
 
 function doChart(chart_json, category, years) {
@@ -391,19 +398,32 @@ function getCategoryCountsByYear(data, legend_labels, years) {
   return json;
 }
 
+function layerGroupName(string) {
+  var labelled = string.trim().toLowerCase();
+  labelled = labelled.replace(/[^\w\s\']|_/g, "").replace(/\s+/g, "");
+  return labelled;
+}
+
+function categoryClickLegend(filter) {
+  console.log(filter);
+}
 function doLegendControls(legend_labels, data_by_years, years, chart_json) {
   // populate legend
   d3.select("#legend")
     .append("ul")
     .html(function () {
       var html = "";
+
       legend_labels.forEach(function (label) {
-        html +=
-          '<li><div class="color" style="background-color:' +
+        var cat =
+          '<li data-filter="' +
+          layerGroupName(label) +
+          '" ><div class="color" style="background-color:' +
           getMarkerColor(label) +
           '"></div><div class="label">' +
           label.toLowerCase() +
           "</div></li>";
+        html += cat;
       });
       return html;
     });
@@ -456,17 +476,60 @@ function doLegendControls(legend_labels, data_by_years, years, chart_json) {
     return html;
   });
 
-  // listen for year selection
+  // listen for year selection (map)
   var s = document.getElementById("y_select");
   s.addEventListener("change", function (e) {
     // remove existing map
     map.remove();
     // re-build map for new year
     var i = years.indexOf(e.target.value);
-    doMap(data_by_years, years, i);
+    currentYearIndex = i;
+    doMap(
+      data_by_years,
+      years,
+      currentYearIndex,
+      default_coords,
+      default_zoom,
+      currentFilter
+    );
   });
 
-  // listen for category selection
+  var resetActiveFilters = () => {
+    var unselect = document.querySelectorAll("li[data-filter].active-filter");
+    unselect.forEach((s) => {
+      s.classList.remove("active-filter");
+    });
+  };
+
+  // listen for category selection (map)
+  var s = document.querySelectorAll("li[data-filter]");
+  s.forEach((x) => {
+    x.addEventListener("click", function (e, s) {
+      if (e.currentTarget.classList.contains("active-filter")) {
+        // if active filter...
+        e.currentTarget.classList.remove("active-filter");
+        resetActiveFilters();
+        currentFilter = false; // remove filter
+      } else {
+        // if not active filter...
+        resetActiveFilters();
+        e.currentTarget.classList.add("active-filter");
+        currentFilter = e.currentTarget.dataset.filter; // add filter
+      }
+
+      map.remove();
+      doMap(
+        data_by_years,
+        years,
+        currentYearIndex,
+        default_coords,
+        default_zoom,
+        currentFilter
+      );
+    });
+  });
+
+  // listen for category selection (chart)
   var s = document.getElementById("c_select");
   s.addEventListener("change", function (e) {
     var chart = document.querySelector(chart_container);
@@ -475,7 +538,7 @@ function doLegendControls(legend_labels, data_by_years, years, chart_json) {
     doChart(chart_json, category, years);
   });
 
-  // listen for filter selections
+  // listen for filter selections (cards)
   var c_filter = "";
   var y_filter = "";
   var t_filter = "";
@@ -500,6 +563,7 @@ function doLegendControls(legend_labels, data_by_years, years, chart_json) {
       $(browse_container + " .card")
         .not(':containsi("' + t + '")')
         .hide();
+    $(browse_container).show();
   };
 
   // listen for keyword query
@@ -525,11 +589,18 @@ function doLegendControls(legend_labels, data_by_years, years, chart_json) {
   });
 }
 
-function doMap(data_by_years, years, year_index) {
+function doMap(
+  data_by_years,
+  years,
+  year_index = currentYearIndex,
+  center = default_coords,
+  zoom = default_zoom,
+  filter = false
+) {
   map = L.map(map_container, {
     scrollWheelZoom: false,
-    center: default_coords,
-    zoom: default_zoom,
+    center: center,
+    zoom: zoom,
   });
   L.tileLayer(
     "//cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/light_all/{z}/{x}/{y}{retina}.png",
@@ -537,34 +608,90 @@ function doMap(data_by_years, years, year_index) {
       attribution:
         '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://cartodb.com/attributions">CartoDB</a>',
       retina: L.Browser.retina ? "@2x" : "",
-      maxZoom: 20,
+      maxZoom: 22,
       maxNativeZoom: 18,
     }
   ).addTo(map);
 
-  map.once("layeradd ", () => {
+  map.once("layeradd ", (e) => {
     if (dispatchMap) {
+      // initial map load is complete, continue drawing page
       const mapEvent = new Event("initialMapLoad");
       document.dispatchEvent(mapEvent);
       dispatchMap = false;
     }
   });
 
+  map.on("focus", () => {
+    // allow scroll zoom when map is in focus
+    map.scrollWheelZoom.enable();
+  });
+
+  map.on("blur", () => {
+    // turn off scroll zoom on blur
+    map.scrollWheelZoom.disable();
+  });
+
+  map.on("zoomend", () => {
+    // track current zoom
+    default_zoom = map.getZoom();
+  });
+
+  map.on("moveend", () => {
+    // track current coords
+    default_coords = map.getCenter();
+  });
+
   // cluster group
-  var group = [];
-  var markers = L.markerClusterGroup({
+  var clusterGroup = L.markerClusterGroup({
     showCoverageOnHover: true,
     spiderfyOnMaxZoom: true,
-    zoomToBoundsOnClick: true,
-    maxClusterRadius: 50,
+    zoomToBoundsOnClick: false,
+    maxClusterRadius: 0,
     polygonOptions: {
       stroke: false,
       color: "#000",
       fillOpacity: 0.1,
     },
+    iconCreateFunction: (cluster) => {
+      var markers = cluster.getAllChildMarkers();
+      var clusterColors = new Set();
+      var style = null;
+      markers.forEach((marker) => {
+        if (!marker.options.fillColor.startsWith("#"))
+          clusterColors.add(marker.options.fillColor);
+      });
+      if (clusterColors.size > 1) {
+        style =
+          "background: linear-gradient(to top right," +
+          Array.from(clusterColors).toString() +
+          ")";
+      } else if (clusterColors.size > 0) {
+        style =
+          "background:" + Array.from(clusterColors).toString() + "!important";
+      } else {
+        style = "background: rgba(122, 122, 122, 1)";
+      }
+
+      var childCount = cluster.getChildCount();
+      var c = " marker-cluster-";
+      if (childCount < 10) {
+        c += "small";
+      } else if (childCount < 30) {
+        c += "medium";
+      } else {
+        c += "large";
+      }
+      return new L.DivIcon({
+        html:
+          '<div style="' + style + '"><span>' + childCount + "</span></div>",
+        className: "marker-cluster" + c,
+        iconSize: new L.Point(20, 20),
+      });
+    },
   });
 
-  // add markers
+  // add marker
   data_by_years[year_index].forEach(function (row, i) {
     // coords
     var lon = row.Longitude;
@@ -595,6 +722,7 @@ function doMap(data_by_years, years, year_index) {
         category_and_sub[0].trim() +
         "</div>"
       : "";
+
     var subcategory = category_and_sub[1]
       ? '<div class="subcategory"><span>Subcategory:</span> ' +
         category_and_sub[1].trim() +
@@ -616,6 +744,7 @@ function doMap(data_by_years, years, year_index) {
       subcategory +
       note +
       "</div>";
+
     // address toast
     var street_address =
       row.street && row.street_number
@@ -630,49 +759,99 @@ function doMap(data_by_years, years, year_index) {
 
     var marker = L.circleMarker([lat, lon], {
       address: address_toast_info,
-      radius: 10,
+      radius: 8,
       color: "#ffffff",
-      opacity: 0.5,
-      weight: 6,
+      opacity: 1,
+      weight: 1,
       fillColor: getMarkerColor(category_and_sub[0]),
-      fillOpacity: 1,
+      fillOpacity: 0.75,
       fill: true,
       title: convertHtmlToText(title),
       alt: convertHtmlToText(title),
     }).bindPopup(popup_text);
 
-    group.push(marker);
-    markers.addLayer(marker);
+    var layerGroup = layerGroupName(category_and_sub[0]);
+    if (filter) {
+      // filter by category
+      if (filter === layerGroup) clusterGroup.addLayer(marker);
+    } else {
+      clusterGroup.addLayer(marker);
+    }
+    // switch (layerGroup) {
+    //   case "clubsandorganizations":
+    //     clubsandorganizations.push(marker);
+    //     break;
+    //   case "entertainment":
+    //     entertainment.push(marker);
+    //     break;
+    //   case "financeinsuranceandrealestate":
+    //     financeinsuranceandrealestate.push(marker);
+    //     break;
+    //   case "foodservicesanddrinkingplaces":
+    //     foodservicesanddrinkingplaces.push(marker);
+    //     break;
+    //   case "hotelsandmotels":
+    //     hotelsandmotels.push(marker);
+    //     break;
+    //   case "institution":
+    //     institution.push(marker);
+    //     break;
+    //   case "manufacturer":
+    //     manufacturer.push(marker);
+    //     break;
+    //   case "museumsandgalleries":
+    //     museumsandgalleries.push(marker);
+    //     break;
+    //   case "professional":
+    //     professional.push(marker);
+    //     break;
+    //   case "retail":
+    //     retail.push(marker);
+    //     break;
+    //   case "service":
+    //     service.push(marker);
+    //     break;
+    //   case "vacant":
+    //     vacant.push(marker);
+    //     break;
+    //   case "other":
+    //     other.push(marker);
+    //     break;
+    //   default:
+    //     other.push(marker);
+    //     break;
+    // }
+    // clusterGroup.addLayer(marker);
   });
 
   // cluster
-  map.addLayer(markers);
+  map.addLayer(clusterGroup);
 
-  //
-  markers.on("clusterclick", function (a) {
-    a.layer.zoomToBounds({ padding: [20, 20] });
+  // panTo cluster
+  clusterGroup.on("clusterclick", function (a) {
+    map.panTo(a.layer._cLatLng);
   });
 
   // respond to spidering
-  markers.on("unspiderfied", function (e) {
+  clusterGroup.on("unspiderfied", function (e) {
     // remove toast content
     d3.select("#toast-inner").html("");
-    // remove class from map and child markers
+    // remove class from map and child marker
     e.markers.forEach(function (marker) {
       marker._path.classList.remove("active-marker");
     });
     var el = document.getElementById(map_container);
     el.classList.remove("spiderfied");
   });
-  markers.on("spiderfied", function (e) {
-    // add class to map and child markers
+  clusterGroup.on("spiderfied", function (e) {
+    // add class to map and child marker
     e.markers.forEach(function (marker) {
       marker._path.classList.add("active-marker");
     });
     // add spiderfied class to map container
     var el = document.getElementById(map_container);
     el.classList.add("spiderfied");
-    // change rendered order to move active markers to front
+    // change rendered order to move active marker to front
     d3.selectAll(".spiderfied path.active-marker").moveToFront();
     // update toast
     var address_array = e.markers
@@ -684,8 +863,11 @@ function doMap(data_by_years, years, year_index) {
         : address_array.length + " addresses";
     d3.select("#toast-inner").html(toast_content);
   });
-  // Fit map to markers (@TODO: ON INITIAL LOAD ONLY)
-  map.fitBounds(markers.getBounds());
+  // Fit map to clusterGroup (ON INITIAL LOAD ONLY)
+  if (zoomToBounds) {
+    map.fitBounds(clusterGroup.getBounds());
+    zoomToBounds = false;
+  }
 }
 
 function colorRange(i) {
